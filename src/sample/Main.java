@@ -197,6 +197,22 @@ public class Main extends Application{
             }
         });
 
+        registerBtn.setOnAction((event) -> {
+            String fname = fnameField.getText();
+            String sname = snameField.getText();
+            String email = emailField.getText();
+            String password = passwordField.getText();
+            int age = Integer.parseInt(ageField.getText());
+            float height = Float.parseFloat(heightField.getText());
+            float weight = Float.parseFloat(weightField.getText());
+            RadioButton selected = (RadioButton) genderRadioGroup.getSelectedToggle();
+            String gender = selected.getText();
+            int selectedIndex = activityLevelChoice.getSelectionModel().getSelectedIndex();
+
+            UserAccount user1 = new UserAccount(fname, sname, email, password, age, height, weight, gender, selectedIndex);
+            System.out.println(user1.toString());
+        });
+
         stage.setScene(scene);
         stage.show();
     }
