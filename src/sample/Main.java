@@ -31,46 +31,54 @@ public class Main extends Application{
         primaryStage.setWidth(800);
         primaryStage.setHeight(700);
 
+        // display welcome page containing login form and button to register form
         WelcomePage(primaryStage);
     }
 
+    /* Method that display the first page to the user, displays a login form,
+    *  if the user does not have an account there is a button that send them to the registration form.
+    *  parameters: Stage stage -> pass through primary stage in order to set the scene onto that stage */
     void WelcomePage(Stage stage) {
+        String fontName = "Arial";
+
+        // set scene layout
         VBox parent = new VBox();
         Scene scene = new Scene(parent);
         parent.setAlignment(Pos.BASELINE_CENTER);
         parent.setSpacing(20);
         parent.setStyle("-fx-background-color: #ededed");
 
-        String fontName = "Arial";
-
+        // page title
         Text title = new Text("Please login or register");
         parent.getChildren().add(title);
         VBox.setMargin(title, new Insets(50,0,0 ,0));
         title.setFont(Font.font(fontName, FontWeight.BOLD, 40));
 
+        // email
         Label emailLabel = new Label("Email");
         VBox.setMargin(emailLabel, new Insets(75,0,0,0));
         parent.getChildren().add(emailLabel);
-
         TextField emailField = new TextField();
         parent.getChildren().add(emailField);
         emailField.setMaxSize(400, 25);
         VBox.setMargin(emailField, new Insets(-20,0,0,0));
 
+        // password
         Label passwordLabel = new Label("Password");
         parent.getChildren().add(passwordLabel);
-
         PasswordField passwordField = new PasswordField();
         parent.getChildren().add(passwordField);
         passwordField.setMaxSize(400, 25);
         VBox.setMargin(passwordField, new Insets(-20,0,0,0));
 
+        // login button
         Button loginBtn = new Button("Sign in");
         parent.getChildren().add(loginBtn);
         loginBtn.setFont(Font.font(fontName, FontWeight.NORMAL, 18));
         loginBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed");
         loginBtn.setMaxWidth(100);
 
+        // button to send the user to registration form
         Button registerBtn = new Button("Register here");
         parent.getChildren().add(registerBtn);
         VBox.setMargin(registerBtn, new Insets(50,0,0,0));
@@ -78,12 +86,14 @@ public class Main extends Application{
         registerBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed");
         registerBtn.setMaxWidth(140);
 
+        // exit button, closes the application
         Button exitBtn = new Button("Exit");
         parent.getChildren().add(exitBtn);
         exitBtn.setFont(Font.font(fontName, FontWeight.NORMAL, 18));
         exitBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed");
         exitBtn.setMaxWidth(140);
 
+        // load the registration form scene when user clicks on registerBtn
         registerBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -91,6 +101,7 @@ public class Main extends Application{
             }
         });
 
+        // exit application when clicking on exitBtn
         exitBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -102,7 +113,11 @@ public class Main extends Application{
         stage.show();
     }
 
+
+    /* Method displays registration form to user and gathers inputs to create a user account
+    *  parameter: Stage stage -> pass through the stage to which the registration scene should be assigned to */
     void registerPage(Stage stage) {
+        // set up a grid as the form layout
         GridPane grid = new GridPane();
         Scene scene = new Scene(grid);
         grid.setStyle("-fx-background-color: #ededed");
@@ -114,33 +129,39 @@ public class Main extends Application{
         grid.setVgap(10);
         grid.setPadding(new Insets(10));
 
+        // title
         Text title = new Text("Register");
         title.setFont(Font.font(fontName, FontWeight.BOLD, 40));
         grid.add(title, 0,0);
 
+        // first name
         Label fnameLabel = new Label("First name");
         grid.add(fnameLabel, 0, 1);
         TextField fnameField = new TextField();
-        fnameField.setPromptText("John");
+        fnameField.setPromptText("John");   // setPromptText() displays a placeholder text inside the text field
         grid.add(fnameField, 1,1);
 
+        // second name
         Label snameLabel = new Label("Second name");
         grid.add(snameLabel, 0,2);
         TextField snameField = new TextField();
         snameField.setPromptText("Smith");
         grid.add(snameField, 1,2);
 
+        // email
         Label emailLabel = new Label("Email");
         grid.add(emailLabel, 0,3);
         TextField emailField = new TextField();
         emailField.setPromptText("johnsmith@gmail.com");
         grid.add(emailField, 1,3);
 
+        // password
         Label passwordLabel = new Label("Password");
         grid.add(passwordLabel, 0,4);
         PasswordField passwordField = new PasswordField();
         grid.add(passwordField, 1,4);
 
+        // gender: set up radioboxes
         Label genderLabel = new Label("Gender");
         grid.add(genderLabel, 0,5);
         RadioButton radiobtnMale = new RadioButton("Male");
@@ -148,28 +169,33 @@ public class Main extends Application{
         RadioButton radiobtnFemale = new RadioButton("Female");
         grid.add(radiobtnFemale, 2,5);
 
+        // add the radioboxes to a toggle group
         ToggleGroup genderRadioGroup = new ToggleGroup();
         radiobtnMale.setToggleGroup(genderRadioGroup);
         radiobtnFemale.setToggleGroup(genderRadioGroup);
 
+        // height
         Label heightLabel = new Label("Height(m)");
         grid.add(heightLabel, 0,6);
         TextField heightField = new TextField();
         heightField.setPromptText("1.80");
         grid.add(heightField, 1,6);
 
+        // weight
         Label weightLabel = new Label("Weight(kg)");
         grid.add(weightLabel, 0,7);
         TextField weightField = new TextField();
         weightField.setPromptText("75");
         grid.add(weightField, 1,7);
 
+        // age
         Label ageLabel = new Label("Age");
         grid.add(ageLabel, 0,8);
         TextField ageField = new TextField();
         ageField.setPromptText("25");
         grid.add(ageField, 1,8);
 
+        // set up choice box for user's activity level
         Label activityLevelLabel = new Label("Activity level");
         grid.add(activityLevelLabel, 0,9);
         ChoiceBox activityLevelChoice = new ChoiceBox();
@@ -180,16 +206,19 @@ public class Main extends Application{
         activityLevelChoice.getItems().add("Athlete (2x a day)");
         grid.add(activityLevelChoice, 1,9);
 
+        // back button
         Button backBtn = new Button("Back");
         grid.add(backBtn, 0,10);
         backBtn.setFont(Font.font(fontName, FontWeight.NORMAL, 18));
         backBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed");
 
+        // register button
         Button registerBtn = new Button("Register");
         grid.add(registerBtn, 1,10);
         registerBtn.setFont(Font.font(fontName, FontWeight.NORMAL, 18));
         registerBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed");
 
+        // send user back to first page if backBtn is pressed
         backBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -197,6 +226,8 @@ public class Main extends Application{
             }
         });
 
+        // gather inputs from registration form and create a user account from all that information when
+        // the register button is pressed
         registerBtn.setOnAction((event) -> {
             String fname = fnameField.getText();
             String sname = snameField.getText();
