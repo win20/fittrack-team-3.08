@@ -1,7 +1,5 @@
 package sample;
 
-import com.sun.jdi.event.StepEvent;
-
 import java.text.DecimalFormat;
 
 public class UserAccount {

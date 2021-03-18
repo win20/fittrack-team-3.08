@@ -1,26 +1,20 @@
 package sample;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.lang.reflect.Field;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main extends Application{
 
@@ -116,6 +110,7 @@ public class Main extends Application{
 
     /* Method displays registration form to user and gathers inputs to create a user account
     *  parameter: Stage stage -> pass through the stage to which the registration scene should be assigned to */
+    int allChecksPassed = 0;
     void registerPage(Stage stage) {
         // set up a grid as the form layout
         GridPane grid = new GridPane();
@@ -204,17 +199,40 @@ public class Main extends Application{
         activityLevelChoice.getItems().add("Moderate exercise (3-5 days a week)");
         activityLevelChoice.getItems().add("Heavy exercise (6-7 days a week)");
         activityLevelChoice.getItems().add("Athlete (2x a day)");
+        activityLevelChoice.setMinWidth(250);
         grid.add(activityLevelChoice, 1,9);
+
+        // set goal
+        Label goalLabel = new Label("Goal");
+        grid.add(goalLabel, 0,10);
+        ChoiceBox goalChoice = new ChoiceBox();
+        goalChoice.getItems().add("Lose weight");
+        goalChoice.getItems().add("Maintain weight");
+        goalChoice.getItems().add("Gain weight");
+        goalChoice.setMinWidth(250);
+        grid.add(goalChoice, 1,10);
+
+        // Text used to inform the user if they have made mistakes in their form completion
+        Text validationText = new Text("");
+        grid.add(validationText, 1, 11);
+
+        stringValidation(fnameField, validationText);
+        stringValidation(snameField, validationText);
+        emailValidation(emailField, validationText);
+        passwordValidation(passwordField, validationText);
+        numberValidation(heightField, validationText);
+        numberValidation(weightField, validationText);
+        intValidation(ageField, validationText);
 
         // back button
         Button backBtn = new Button("Back");
-        grid.add(backBtn, 0,10);
+        grid.add(backBtn, 0,13);
         backBtn.setFont(Font.font(fontName, FontWeight.NORMAL, 18));
         backBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed");
 
         // register button
         Button registerBtn = new Button("Register");
-        grid.add(registerBtn, 1,10);
+        grid.add(registerBtn, 1,13);
         registerBtn.setFont(Font.font(fontName, FontWeight.NORMAL, 18));
         registerBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed");
 
@@ -229,24 +247,112 @@ public class Main extends Application{
         // gather inputs from registration form and create a user account from all that information when
         // the register button is pressed
         registerBtn.setOnAction((event) -> {
-            String fname = fnameField.getText();
-            String sname = snameField.getText();
-            String email = emailField.getText();
-            String password = passwordField.getText();
-            int age = Integer.parseInt(ageField.getText());
-            float height = Float.parseFloat(heightField.getText());
-            float weight = Float.parseFloat(weightField.getText());
             RadioButton selected = (RadioButton) genderRadioGroup.getSelectedToggle();
-            String gender = selected.getText();
-            int selectedIndex = activityLevelChoice.getSelectionModel().getSelectedIndex();
-
-            UserAccount user1 = new UserAccount(fname, sname, email, password, age, height, weight, gender, selectedIndex);
-            System.out.println(user1.toString());
+            boolean isActivityEmpty = activityLevelChoice.getSelectionModel().isEmpty();
+            boolean isGoalEmpty = goalChoice.getSelectionModel().isEmpty();
+            if (selected != null && !isActivityEmpty && !isGoalEmpty && allChecksPassed == 7) {
+                String fname = fnameField.getText();
+                String sname = snameField.getText();
+                String email = emailField.getText();
+                String password = passwordField.getText();
+                int age = Integer.parseInt(ageField.getText());
+                float height = Float.parseFloat(heightField.getText());
+                float weight = Float.parseFloat(weightField.getText());
+                String gender = selected.getText();
+                int selectedIndex = activityLevelChoice.getSelectionModel().getSelectedIndex();
+                UserAccount user1 = new UserAccount(fname, sname, email, password, age, height, weight, gender, selectedIndex);
+                System.out.println(user1.toString());
+                validationText.setText("");
+            } else {
+                System.out.println("Form invalid");
+                validationText.setText("All fields are required. Please complete the form");
+            }
         });
 
         stage.setScene(scene);
         stage.show();
     }
+
+    /* ============================================================================================
+     GROUP OF METHODS USED FOR VALIDATIONS AND UI FEEDBACK WHILE THE USER IS COMPLETING THE FORM
+    =============================================================================================== */
+    void stringValidation(TextField field, Text validationText) {
+        field.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+            if (!newValue) { //when focus losts
+                if(!FormValidator.isValidName(field.getText())){
+                    validationText.setText("Invalid name");
+                    field.setStyle("-fx-text-box-border: #e81a2e; -fx-focus-color: #e81a2e;");
+                } else {
+                    validationText.setText("");
+                    field.setStyle("-fx-text-box-border: #24bd73; -fx-focus-color: #24bd73;");
+                    allChecksPassed += 1;
+                }
+            }
+        });
+    }
+
+    void emailValidation(TextField field, Text validationText) {
+        field.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+            if (!newValue) { //when focus losts
+                if(!FormValidator.isValidEmail(field.getText())){
+                    validationText.setText("Invalid email");
+                    field.setStyle("-fx-text-box-border: #e81a2e; -fx-focus-color: #e81a2e;");
+                } else {
+                    validationText.setText("");
+                    field.setStyle("-fx-text-box-border: #24bd73; -fx-focus-color: #24bd73;");
+                    allChecksPassed += 1;
+                }
+            }
+        });
+    }
+
+    void passwordValidation(PasswordField field, Text validationText) {
+        field.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+            if (!newValue) { //when focus losts
+                if(!FormValidator.isValidPassword(field.getText())){
+                    validationText.setText("Invalid password:\nMinimum 1 digit\nMinimum 1 capital letter\n" +
+                            "Minimum 9 characters");
+                    field.setStyle("-fx-text-box-border: #e81a2e; -fx-focus-color: #e81a2e;");
+                } else {
+                    validationText.setText("");
+                    field.setStyle("-fx-text-box-border: #24bd73; -fx-focus-color: #24bd73;");
+                    allChecksPassed += 1;
+                }
+            }
+        });
+    }
+
+    void numberValidation(TextField field, Text validationText) {
+        field.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+            if (!newValue) { //when focus losts
+                if(!FormValidator.isValidNumbers(field.getText())){
+                    validationText.setText("Invalid height and/or weight");
+                    field.setStyle("-fx-text-box-border: #e81a2e; -fx-focus-color: #e81a2e;");
+                } else {
+                    validationText.setText("");
+                    field.setStyle("-fx-text-box-border: #24bd73; -fx-focus-color: #24bd73;");
+                    allChecksPassed += 1;
+                }
+            }
+        });
+    }
+
+    void intValidation(TextField field, Text validationText) {
+        field.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+            if (!newValue) { //when focus losts
+                if(!FormValidator.isValidInt(field.getText())){
+                    validationText.setText("Invalid age");
+                    field.setStyle("-fx-text-box-border: #e81a2e; -fx-focus-color: #e81a2e;");
+                } else {
+                    validationText.setText("");
+                    field.setStyle("-fx-text-box-border: #24bd73; -fx-focus-color: #24bd73;");
+                    allChecksPassed += 1;
+                }
+            }
+        });
+    }
+
+    /* ============ END OF VALIDATION METHODS =============== */
 
     public static void main(String[] args) {
         launch(args);
