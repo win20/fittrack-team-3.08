@@ -1,5 +1,6 @@
 package sample;
 
+import java.awt.event.ActionEvent;
 import java.text.DecimalFormat;
 
 public class UserAccount {
@@ -11,6 +12,34 @@ public class UserAccount {
     private int activityLevelIndex;
     private float bmi, idealWeight;
     private int dailyCalories;
+
+    private enum ActivityLevel {
+        SEDENTARY (1.2f),
+        LIGHT_EXERCISE (1.375f),
+        MODERATE_EXERCISE (1.55f),
+        HEAVY_EXERCISE (1.725f),
+        ATHLETE (1.9f);
+
+        float multiplier;
+
+        ActivityLevel(float multiplier) {
+            this.multiplier = multiplier;
+        }
+    }
+
+    private enum WeightGoal {
+        LOSE (-400),
+        MAINTAIN (0),
+        GAIN (400);
+
+        int caloriesAdded;
+
+        WeightGoal(int code) {
+            this.caloriesAdded = code;
+        }
+    }
+    private ActivityLevel activityLevel;
+    private WeightGoal weightGoal;
 
     // Accessor methods
     public String getFname() { return fname; }
@@ -25,6 +54,8 @@ public class UserAccount {
     public float getBmi() { return bmi; }
     public float getIdealWeight() { return idealWeight; }
     public int getDailyCalories() { return dailyCalories; }
+    public WeightGoal getWeightGoal() { return weightGoal; }
+    public ActivityLevel getActivityLevel() { return activityLevel; }
 
     // Modifier methods
     public void setFname(String fname) { this.fname = fname; }
@@ -40,10 +71,11 @@ public class UserAccount {
     public void setIdealWeight(float idealWeight) { this.idealWeight = idealWeight; }
     public void setDailyCalories(int dailyCalories) { this.dailyCalories = dailyCalories; }
 
+
     // User constructor, gets all information that user has provided and sets appropriate attributes..
     // .. dailyCalories, BMI and idealWeight are calculated later using this first set of data
     UserAccount (String fname, String sname, String email, String password, int age, float height, float weight,
-                 String gender, int activityLevelIndex) {
+                 String gender, int activityLevelIndex, int goalIndex) {
         this.fname = fname;
         this.sname = sname;
         this.email = email;
@@ -52,7 +84,10 @@ public class UserAccount {
         this.height = height;
         this.weight = weight;
         this.gender = gender;
-        this.activityLevelIndex = activityLevelIndex;
+//        this.activityLevelIndex = activityLevelIndex;
+
+        SetActivityLevel(activityLevelIndex);
+        SetWeightGoal(goalIndex);
 
         // calculate user fitness data and set it to one decimal point
         DecimalFormat df = new DecimalFormat("#.#");
@@ -76,7 +111,48 @@ public class UserAccount {
                 ", bmi=" + bmi +
                 ", idealWeight=" + idealWeight +
                 ", dailyCalories=" + dailyCalories +
+                ", activityLevel=" + activityLevel +
+                ", weightGoal=" + weightGoal +
                 '}';
+    }
+
+    public void SetWeightGoal(int idx) {
+        switch (idx) {
+            case 0:
+                weightGoal = WeightGoal.LOSE;
+                break;
+            case 1:
+                weightGoal = WeightGoal.MAINTAIN;
+                break;
+            case 2:
+                weightGoal = WeightGoal.GAIN;
+                break;
+        }
+    }
+
+    public void SetActivityLevel(int idx) {
+        switch (idx) {
+            case 0:
+                activityLevel = ActivityLevel.SEDENTARY;
+                break;
+            case 1:
+                activityLevel = ActivityLevel.LIGHT_EXERCISE;
+                break;
+            case 2:
+                activityLevel = ActivityLevel.MODERATE_EXERCISE;
+                break;
+            case 3:
+                activityLevel = ActivityLevel.HEAVY_EXERCISE;
+                break;
+            case 4:
+                activityLevel = ActivityLevel.ATHLETE;
+                break;
+        }
+    }
+
+    public void test () {
+        System.out.println(activityLevel.multiplier);
+        System.out.println(weightGoal.caloriesAdded);
     }
 
     // Calculate Body Mass Index
@@ -95,19 +171,8 @@ public class UserAccount {
         }
 
         // final value is calculated using a multiplier that relates to the user's activity level
-        switch (activityLevelIndex) {
-            case 0:
-                return (int) Math.round(bmr * 1.2);
-            case 1:
-                return (int) Math.round(bmr * 1.375);
-            case 2:
-                return (int) Math.round(bmr * 1.55);
-            case 3:
-                return (int) Math.round(bmr * 1.725);
-            case 4:
-                return (int) Math.round(bmr * 1.9);
-        }
-        return 0;
+        // add or remove calories depending on the goal
+        return (int) Math.round((bmr * activityLevel.multiplier) + weightGoal.caloriesAdded);
     }
 
     // Calculate an ideal weight for the user that is meant to be used as "guidance"

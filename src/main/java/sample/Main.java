@@ -259,9 +259,12 @@ public class Main extends Application{
                 float height = Float.parseFloat(heightField.getText());
                 float weight = Float.parseFloat(weightField.getText());
                 String gender = selected.getText();
-                int selectedIndex = activityLevelChoice.getSelectionModel().getSelectedIndex();
-                UserAccount user1 = new UserAccount(fname, sname, email, password, age, height, weight, gender, selectedIndex);
+                int activitySelectedIndex = activityLevelChoice.getSelectionModel().getSelectedIndex();
+                int goalSelectedIndex = goalChoice.getSelectionModel().getSelectedIndex();
+                UserAccount user1 = new UserAccount(fname, sname, email, password, age, height, weight, gender,
+                        activitySelectedIndex, goalSelectedIndex);
                 System.out.println(user1.toString());
+                user1.test();
                 validationText.setText("");
             } else {
                 System.out.println("Form invalid");
