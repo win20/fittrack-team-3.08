@@ -14,9 +14,15 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.*;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main extends Application{
+
+    byte[] salt;
 
     // TEST COMMENT //
     @Override
@@ -95,6 +101,8 @@ public class Main extends Application{
                 registerPage(stage);
             }
         });
+
+
 
         // exit application when clicking on exitBtn
         exitBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -265,7 +273,8 @@ public class Main extends Application{
                 UserAccount user1 = new UserAccount(fname, sname, email, password, age, height, weight, gender,
                         activitySelectedIndex, goalSelectedIndex);
                 System.out.println(user1.toString());
-                user1.test();
+
+                System.out.println(user1.getPassword());
                 validationText.setText("");
             } else {
                 System.out.println("Form invalid");
@@ -355,10 +364,10 @@ public class Main extends Application{
             }
         });
     }
-
     /* ============ END OF VALIDATION METHODS =============== */
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
         launch(args);
+
     }
 }

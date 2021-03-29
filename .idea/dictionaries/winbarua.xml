@@ -2,6 +2,10 @@
   <dictionary name="winbarua">
     <words>
       <w>fname</w>
+      <w>hasher</w>
+      <w>hmac</w>
+      <w>pbkdf</w>
+      <w>prng</w>
       <w>radioboxes</w>
       <w>radiobtn</w>
       <w>sname</w>
