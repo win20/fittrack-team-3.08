@@ -269,7 +269,7 @@ public class UserAccount {
 
     public static byte[] salt;
     static void register() throws IOException, NoSuchAlgorithmException {
-        String passToHash = "Candi.201099";
+        String passToHash = "Win201099";
         salt = PasswordHasher.getSalt();
         System.out.println("Register: " + Arrays.toString(salt));
         String hashedPass = PasswordHasher.hash(passToHash, salt);
@@ -310,5 +310,4 @@ public class UserAccount {
 
         System.out.println(PasswordHasher.checkPassword(hashedPassInput, passInput, saltInput));
     }
-
 }
