@@ -1,7 +1,10 @@
 <component name="ProjectDictionaryState">
   <dictionary name="winbarua">
     <words>
+      <w>activitylevelindex</w>
+      <w>firstname</w>
       <w>fname</w>
+      <w>goalindex</w>
       <w>hasher</w>
       <w>hmac</w>
       <w>pbkdf</w>

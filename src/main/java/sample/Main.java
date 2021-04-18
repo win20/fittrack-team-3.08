@@ -16,13 +16,21 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main extends Application{
 
     byte[] salt;
+
+    int user_id = 0;
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void incUserID() {
+        int tmp = DatabaseHandler.getLastUserId();
+        user_id = tmp + 1;
+    }
 
     // TEST COMMENT //
     @Override
@@ -221,6 +229,7 @@ public class Main extends Application{
         goalChoice.setMinWidth(250);
         grid.add(goalChoice, 1,10);
 
+
         // Text used to inform the user if they have made mistakes in their form completion
         Text validationText = new Text("");
         grid.add(validationText, 1, 11);
@@ -256,10 +265,23 @@ public class Main extends Application{
         // gather inputs from registration form and create a user account from all that information when
         // the register button is pressed
         registerBtn.setOnAction((event) -> {
+            File tmpFile = new File("users.csv");
+            if (tmpFile.exists()) {
+                incUserID();
+            } else {
+                try {
+                    DatabaseHandler.InitDatabase();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
             RadioButton selected = (RadioButton) genderRadioGroup.getSelectedToggle();
             boolean isActivityEmpty = activityLevelChoice.getSelectionModel().isEmpty();
             boolean isGoalEmpty = goalChoice.getSelectionModel().isEmpty();
             if (selected != null && !isActivityEmpty && !isGoalEmpty && allChecksPassed == 7) {
+
+
                 String fname = fnameField.getText();
                 String sname = snameField.getText();
                 String email = emailField.getText();
@@ -270,16 +292,27 @@ public class Main extends Application{
                 String gender = selected.getText();
                 int activitySelectedIndex = activityLevelChoice.getSelectionModel().getSelectedIndex();
                 int goalSelectedIndex = goalChoice.getSelectionModel().getSelectedIndex();
-                UserAccount user1 = new UserAccount(fname, sname, email, password, age, height, weight, gender,
+                UserAccount user1 = new UserAccount(user_id, fname, sname, email, password, age, height, weight, gender,
                         activitySelectedIndex, goalSelectedIndex);
+
+                try {
+                    DatabaseHandler.WriteToCSV(user1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 System.out.println(user1.toString());
 
-                System.out.println(user1.getPassword());
+                System.out.println(activitySelectedIndex);
+
+
+
                 validationText.setText("");
             } else {
                 System.out.println("Form invalid");
                 validationText.setText("All fields are required. Please complete the form");
             }
+
+
         });
 
         stage.setScene(scene);
@@ -368,6 +401,5 @@ public class Main extends Application{
 
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
         launch(args);
-
     }
 }

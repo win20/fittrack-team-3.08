@@ -1,27 +1,15 @@
 package sample;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class UserAccount {
     // User account attributes
     private String fname, sname, email, password;
-    private int age;
+    private int age, userId;
     private float height, weight;
     private String gender;
     private int activityLevelIndex;
@@ -58,6 +46,9 @@ public class UserAccount {
     private WeightGoal weightGoal;
 
     // Accessor methods
+
+    public int getUserId() { return userId; }
+
     public String getFname() {
         return fname;
     }
@@ -115,6 +106,8 @@ public class UserAccount {
     }
 
     // Modifier methods
+    public void setUserId(int userId) { this.userId = userId; }
+
     public void setFname(String fname) {
         this.fname = fname;
     }
@@ -166,8 +159,9 @@ public class UserAccount {
 
     // User constructor, gets all information that user has provided and sets appropriate attributes..
     // .. dailyCalories, BMI and idealWeight are calculated later using this first set of data
-    UserAccount(String fname, String sname, String email, String password, int age, float height, float weight,
+    UserAccount(int user_id, String fname, String sname, String email, String password, int age, float height, float weight,
                 String gender, int activityLevelIndex, int goalIndex) {
+        this.userId = user_id;
         this.fname = fname;
         this.sname = sname;
         this.email = email;
@@ -176,7 +170,7 @@ public class UserAccount {
         this.height = height;
         this.weight = weight;
         this.gender = gender;
-//        this.activityLevelIndex = activityLevelIndex;
+        this.activityLevelIndex = activityLevelIndex;
 
         SetActivityLevel(activityLevelIndex);
         SetWeightGoal(goalIndex);
@@ -206,6 +200,16 @@ public class UserAccount {
                 ", activityLevel=" + activityLevel +
                 ", weightGoal=" + weightGoal +
                 '}';
+    }
+
+    public String getUserInfo() {
+        return  userId + "," + fname + "," + sname + "," + email + "," + password + "," + age + "," + height + "," +
+                weight + "," + gender + "," + activityLevelIndex + "," + bmi + "," + idealWeight + "," + dailyCalories +
+                "," + activityLevel + "," + weightGoal;
+    }
+
+    public void incUserId() {
+        userId += 1;
     }
 
     public void SetWeightGoal(int idx) {
@@ -290,24 +294,31 @@ public class UserAccount {
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
 //        System.out.println("Main1: " + Arrays.toString(salt));
 //        register();
-        System.out.println("Main2: " + Arrays.toString(salt));
+//        System.out.println("Main2: " + Arrays.toString(salt));
 //        System.out.println(PasswordHasher.hash("Candi.201099", salt));
+//
+//        File saltFile = new File("salt.txt");
+//        File passFile = new File("passHash.txt");
+//        Scanner readerSalt = new Scanner(saltFile);
+//        Scanner readerPass = new Scanner(passFile);
+//
+//        byte[] saltInput = PasswordHasher.hexToByteArray(readerSalt.nextLine());
+//        String hashedPassInput = readerPass.nextLine();
+//
+//        System.out.println("TEST: " + Arrays.toString(saltInput));
+//        System.out.println(hashedPassInput);
+//
+//        Scanner scanner = new Scanner(System.in);
+//        System.out.println("Enter password");
+//        String passInput = scanner.nextLine();
+//
+//        System.out.println(PasswordHasher.checkPassword(hashedPassInput, passInput, saltInput));
 
-        File saltFile = new File("salt.txt");
-        File passFile = new File("passHash.txt");
-        Scanner readerSalt = new Scanner(saltFile);
-        Scanner readerPass = new Scanner(passFile);
+        UserAccount userAccount = new UserAccount(0, "Win", "Barua", "win.bag@gmail.com",
+                "12345", 20, 1.3f, 44, "MALE", 2, 2);
 
-        byte[] saltInput = PasswordHasher.hexToByteArray(readerSalt.nextLine());
-        String hashedPassInput = readerPass.nextLine();
-
-        System.out.println("TEST: " + Arrays.toString(saltInput));
-        System.out.println(hashedPassInput);
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter password");
-        String passInput = scanner.nextLine();
-
-        System.out.println(PasswordHasher.checkPassword(hashedPassInput, passInput, saltInput));
+        System.out.println(userAccount.toString());
+        System.out.println(userAccount.getUserInfo());
+        DatabaseHandler.WriteToCSV(userAccount);
     }
 }
