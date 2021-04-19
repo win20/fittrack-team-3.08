@@ -1,12 +1,21 @@
 package sample;
+import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvException;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
 public class DatabaseHandler {
+
+    // Initialise user database with headers
     public static void InitDatabase() throws IOException {
         String filePath = "users.csv";
         CSVWriter writer = new CSVWriter(new FileWriter(filePath, false));
@@ -17,6 +26,7 @@ public class DatabaseHandler {
         writer.close();
     }
 
+    // Write user data in the database upon registration
     public static void WriteToCSV(UserAccount userAccount) throws IOException {
         String csv = "users.csv";
         CSVWriter writer = new CSVWriter(new FileWriter(csv, true));
@@ -74,18 +84,115 @@ public class DatabaseHandler {
         }
     }
 
-    public static int getLastUserId() {
-        String tail = tail(new File("users.csv"));
+    public static int getLastUserId(String filePath) {
+        String tail = tail(new File(filePath));
         String trimTail = tail.replace("\"", "").trim();
 
         String[] tailAsArray = trimTail.split(",");
         return Integer.parseInt(tailAsArray[0]);
     }
 
-    public static void main(String[] args) throws Exception
-    {
+    public static void storePassAndSalt(UserAccount userAccount) throws IOException, NoSuchAlgorithmException {
+        String filePath = "passAndSalt.csv";
+        String userIDAsString = String.valueOf(userAccount.getUserId());
 
-        System.out.println(getLastUserId());
+        if (new File(filePath).exists()) {
+            CSVWriter writer = new CSVWriter(new FileWriter(filePath, true));
+            String[] data = (userIDAsString + "," +
+                    UserAccount.returnHashedPassword(userAccount.getPassword())).split(",");
+            writer.writeNext(data);
+            writer.close();
+            System.out.println("appended");
+        } else {
+            CSVWriter writer = new CSVWriter(new FileWriter(filePath, false));
+            String[] heading = "UserID,Password,Salt".split(",");
+            String[] data = (userIDAsString + "," +
+                    UserAccount.returnHashedPassword(userAccount.getPassword())).split(",");
+            writer.writeNext(heading);
+            writer.writeNext(data);
+            writer.close();
+            System.out.println("new file created");
+        }
     }
 
+    public static int returnUserId(String emailToSearch) {
+        try {
+            // Create an object of filereader
+            // class with CSV file as a parameter.
+            FileReader filereader = new FileReader("users.csv");
+
+            // create csvReader object passing
+            // file reader as a parameter
+            CSVReader csvReader = new CSVReader(filereader);
+            String[] nextRecord;
+
+            // we are going to read data line by line
+            while ((nextRecord = csvReader.readNext()) != null) {
+//                System.out.println(Arrays.toString(nextRecord));
+                if (nextRecord[3].equals(emailToSearch)) {
+                    return Integer.parseInt(nextRecord[0]);
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
+    public static String[] readPasswordAndHash(int id) throws IOException, CsvException {
+        try {
+            // Create an object of filereader
+            // class with CSV file as a parameter.
+            FileReader filereader = new FileReader("passAndSalt.csv");
+
+            // create csvReader object passing
+            // file reader as a parameter
+            CSVReader csvReader = new CSVReader(filereader);
+            String[] nextRecord;
+
+            // we are going to read data line by line
+            int i = -1;
+            while ((nextRecord = csvReader.readNext()) != null) {
+//                System.out.println(Arrays.toString(nextRecord));
+                if (i == id) {
+                    return nextRecord;
+                }
+                i += 1;
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+    public static byte[] salt;
+    public static void main(String[] args) throws Exception
+    {
+        Scanner in = new Scanner(System.in);
+        System.out.println("Enter email");
+        String email = in.next();
+
+        int id = returnUserId(email);
+        System.out.println("ID: " + id);
+
+        String[] str = readPasswordAndHash(returnUserId(email));
+        String password = str[1];
+        String saltHex = str[2];
+
+        salt = PasswordHasher.hexToByteArray(saltHex);
+
+        System.out.println("Enter password");
+        String passInput = in.next();
+
+        if (id != -1 && PasswordHasher.checkPassword(password, passInput, salt)) {
+            System.out.println("Login Successful");
+        } else {
+            System.out.println("Login Failed");
+        }
+    }
 }

@@ -1,17 +1,24 @@
 package sample;
 
+import com.opencsv.exceptions.CsvException;
+
+import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class UserAccount {
+    public static byte[] saltOut;
+    public static byte[] saltIn;
     // User account attributes
     private String fname, sname, email, password;
     private int age, userId;
     private float height, weight;
     private String gender;
+    private int genderIndex;
     private int activityLevelIndex;
     private float bmi, idealWeight;
     private int dailyCalories;
@@ -46,6 +53,9 @@ public class UserAccount {
     private WeightGoal weightGoal;
 
     // Accessor methods
+
+
+    public int getGenderIndex() { return genderIndex; }
 
     public int getUserId() { return userId; }
 
@@ -124,6 +134,8 @@ public class UserAccount {
         this.password = password;
     }
 
+    public void setGenderIndex(int genderIndex) { this.genderIndex = genderIndex; }
+
     public void setAge(int age) {
         this.age = age;
     }
@@ -160,7 +172,7 @@ public class UserAccount {
     // User constructor, gets all information that user has provided and sets appropriate attributes..
     // .. dailyCalories, BMI and idealWeight are calculated later using this first set of data
     UserAccount(int user_id, String fname, String sname, String email, String password, int age, float height, float weight,
-                String gender, int activityLevelIndex, int goalIndex) {
+                int genderIndex, int activityLevelIndex, int goalIndex) {
         this.userId = user_id;
         this.fname = fname;
         this.sname = sname;
@@ -169,9 +181,9 @@ public class UserAccount {
         this.age = age;
         this.height = height;
         this.weight = weight;
-        this.gender = gender;
         this.activityLevelIndex = activityLevelIndex;
 
+        SetGender(genderIndex);
         SetActivityLevel(activityLevelIndex);
         SetWeightGoal(goalIndex);
 
@@ -226,6 +238,17 @@ public class UserAccount {
         }
     }
 
+    public void SetGender(int idx) {
+        switch (idx) {
+            case 0:
+                gender = "Male";
+                break;
+            case 1:
+                gender = "Female";
+                break;
+        }
+    }
+
     public void SetActivityLevel(int idx) {
         switch (idx) {
             case 0:
@@ -271,54 +294,41 @@ public class UserAccount {
         return 2.2f * bmi + (3.5f * bmi) * (height - 1.5f);
     }
 
-    public static byte[] salt;
-    static void register() throws IOException, NoSuchAlgorithmException {
-        String passToHash = "Win201099";
-        salt = PasswordHasher.getSalt();
-        System.out.println("Register: " + Arrays.toString(salt));
-        String hashedPass = PasswordHasher.hash(passToHash, salt);
+    static String returnHashedPassword(String passToHash) throws IOException, NoSuchAlgorithmException {
+        saltOut = PasswordHasher.getSalt();
+        System.out.println("Register: " + Arrays.toString(saltOut));
+        String hashedPass = PasswordHasher.hash(passToHash, saltOut);
 
-        System.out.println(hashedPass);
-
-        FileWriter writerPassword = new FileWriter("passHash.txt");
-        writerPassword.write(hashedPass);
-        writerPassword.close();
-
-        FileWriter writerSalt = new FileWriter("salt.txt");
-        for (byte b : salt) {
-            writerSalt.write(String.format("%02X", b));
+        StringBuilder formattedSalt = new StringBuilder();
+        for (byte b : saltOut) {
+            formattedSalt.append(String.format("%02X", b));
         }
-        writerSalt.close();
+
+        return hashedPass + "," + formattedSalt;
     }
 
-    public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
-//        System.out.println("Main1: " + Arrays.toString(salt));
-//        register();
-//        System.out.println("Main2: " + Arrays.toString(salt));
-//        System.out.println(PasswordHasher.hash("Candi.201099", salt));
-//
-//        File saltFile = new File("salt.txt");
-//        File passFile = new File("passHash.txt");
-//        Scanner readerSalt = new Scanner(saltFile);
-//        Scanner readerPass = new Scanner(passFile);
-//
-//        byte[] saltInput = PasswordHasher.hexToByteArray(readerSalt.nextLine());
-//        String hashedPassInput = readerPass.nextLine();
-//
-//        System.out.println("TEST: " + Arrays.toString(saltInput));
-//        System.out.println(hashedPassInput);
-//
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Enter password");
-//        String passInput = scanner.nextLine();
-//
-//        System.out.println(PasswordHasher.checkPassword(hashedPassInput, passInput, saltInput));
+    static boolean Login(String emailEntered, String passwordEntered) throws IOException, CsvException {
+        int id = DatabaseHandler.returnUserId(emailEntered);
+        System.out.println("ID: " + id);
 
-        UserAccount userAccount = new UserAccount(0, "Win", "Barua", "win.bag@gmail.com",
-                "12345", 20, 1.3f, 44, "MALE", 2, 2);
+        String[] str = DatabaseHandler.readPasswordAndHash(id);
+        String passwordFromDB = str[1];
+        String saltHex = str[2];
 
-        System.out.println(userAccount.toString());
-        System.out.println(userAccount.getUserInfo());
-        DatabaseHandler.WriteToCSV(userAccount);
+        saltIn = PasswordHasher.hexToByteArray(saltHex);
+
+        if (id != -1 && PasswordHasher.checkPassword(passwordFromDB, passwordEntered, saltIn)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public static void main(String[] args) throws NoSuchAlgorithmException, IOException, CsvException {
+
+//        UserAccount userAccount = new UserAccount(2, "Win", "Barua", "win.bag@gmail.com",
+//                "Win201099", 20, 1.3f, 44, "MALE", 2, 2);
+//        DatabaseHandler.storePassAndSalt(userAccount);
     }
 }

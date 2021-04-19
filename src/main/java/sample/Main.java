@@ -1,5 +1,6 @@
 package sample;
 
+import com.opencsv.exceptions.CsvException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,6 +17,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends Application{
 
@@ -28,7 +30,7 @@ public class Main extends Application{
     }
 
     public void incUserID() {
-        int tmp = DatabaseHandler.getLastUserId();
+        int tmp = DatabaseHandler.getLastUserId("users.csv");
         user_id = tmp + 1;
     }
 
@@ -102,6 +104,26 @@ public class Main extends Application{
         exitBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed");
         exitBtn.setMaxWidth(140);
 
+        loginBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    boolean isLoginSuccessful = UserAccount.Login(emailField.getText(), passwordField.getText());
+                    alert.setTitle("Login information");
+                    alert.setHeaderText(null);
+                    if (isLoginSuccessful) {
+                        alert.setContentText("Login Successful");
+                    } else {
+                        alert.setContentText("Login Failed");
+                    }
+                    alert.showAndWait();
+                } catch (IOException | CsvException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         // load the registration form scene when user clicks on registerBtn
         registerBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -174,17 +196,25 @@ public class Main extends Application{
         grid.add(passwordField, 1,4);
 
         // gender: set up radioboxes
+//        Label genderLabel = new Label("Gender");
+//        grid.add(genderLabel, 0,5);
+//        RadioButton radiobtnMale = new RadioButton("Male");
+//        grid.add(radiobtnMale, 1,5);
+//        RadioButton radiobtnFemale = new RadioButton("Female");
+//        grid.add(radiobtnFemale, 2,5);
+
         Label genderLabel = new Label("Gender");
         grid.add(genderLabel, 0,5);
-        RadioButton radiobtnMale = new RadioButton("Male");
-        grid.add(radiobtnMale, 1,5);
-        RadioButton radiobtnFemale = new RadioButton("Female");
-        grid.add(radiobtnFemale, 2,5);
+        ChoiceBox genderChoiceBox = new ChoiceBox();
+        genderChoiceBox.getItems().add("Male");
+        genderChoiceBox.getItems().add("Female");
+        genderChoiceBox.setMinWidth(250);
+        grid.add(genderChoiceBox, 1,5);
 
         // add the radioboxes to a toggle group
-        ToggleGroup genderRadioGroup = new ToggleGroup();
-        radiobtnMale.setToggleGroup(genderRadioGroup);
-        radiobtnFemale.setToggleGroup(genderRadioGroup);
+//        ToggleGroup genderRadioGroup = new ToggleGroup();
+//        radiobtnMale.setToggleGroup(genderRadioGroup);
+//        radiobtnFemale.setToggleGroup(genderRadioGroup);
 
         // height
         Label heightLabel = new Label("Height(m)");
@@ -229,7 +259,6 @@ public class Main extends Application{
         goalChoice.setMinWidth(250);
         grid.add(goalChoice, 1,10);
 
-
         // Text used to inform the user if they have made mistakes in their form completion
         Text validationText = new Text("");
         grid.add(validationText, 1, 11);
@@ -262,9 +291,23 @@ public class Main extends Application{
             }
         });
 
+
         // gather inputs from registration form and create a user account from all that information when
         // the register button is pressed
         registerBtn.setOnAction((event) -> {
+            boolean isFormComplete = false;
+
+            String fname = fnameField.getText();
+            String sname = snameField.getText();
+            String email = emailField.getText();
+            String password = passwordField.getText();
+            int age = Integer.parseInt(ageField.getText());
+            float height = Float.parseFloat(heightField.getText());
+            float weight = Float.parseFloat(weightField.getText());
+            int gender = genderChoiceBox.getSelectionModel().getSelectedIndex();
+            int activitySelectedIndex = activityLevelChoice.getSelectionModel().getSelectedIndex();
+            int goalSelectedIndex = goalChoice.getSelectionModel().getSelectedIndex();
+
             File tmpFile = new File("users.csv");
             if (tmpFile.exists()) {
                 incUserID();
@@ -276,43 +319,46 @@ public class Main extends Application{
                 }
             }
 
-            RadioButton selected = (RadioButton) genderRadioGroup.getSelectedToggle();
-            boolean isActivityEmpty = activityLevelChoice.getSelectionModel().isEmpty();
-            boolean isGoalEmpty = goalChoice.getSelectionModel().isEmpty();
-            if (selected != null && !isActivityEmpty && !isGoalEmpty && allChecksPassed == 7) {
+            Alert registrationAlert = new Alert(Alert.AlertType.INFORMATION);
+            registrationAlert.setHeaderText("Information Dialog");
+//            RadioButton selected = (RadioButton) genderRadioGroup.getSelectedToggle();
+            boolean isGenderSelected = !genderChoiceBox.getSelectionModel().isEmpty();
+            boolean isActivitySelected = !activityLevelChoice.getSelectionModel().isEmpty();
+            boolean isGoalSelected = !goalChoice.getSelectionModel().isEmpty();
 
+            if (isGenderSelected && isActivitySelected && isGoalSelected && !fname.equals("") && !sname.equals("") &&
+                    !email.equals("") && !password.equals("") && !ageField.getText().equals("") &&
+                    !heightField.getText().equals("")) {
+                isFormComplete = true;
+            }
 
-                String fname = fnameField.getText();
-                String sname = snameField.getText();
-                String email = emailField.getText();
-                String password = passwordField.getText();
-                int age = Integer.parseInt(ageField.getText());
-                float height = Float.parseFloat(heightField.getText());
-                float weight = Float.parseFloat(weightField.getText());
-                String gender = selected.getText();
-                int activitySelectedIndex = activityLevelChoice.getSelectionModel().getSelectedIndex();
-                int goalSelectedIndex = goalChoice.getSelectionModel().getSelectedIndex();
+            if (isFormComplete) {
                 UserAccount user1 = new UserAccount(user_id, fname, sname, email, password, age, height, weight, gender,
                         activitySelectedIndex, goalSelectedIndex);
 
                 try {
                     DatabaseHandler.WriteToCSV(user1);
-                } catch (IOException e) {
+                    DatabaseHandler.storePassAndSalt(user1);
+                } catch (IOException | NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 }
-                System.out.println(user1.toString());
 
-                System.out.println(activitySelectedIndex);
+
+                System.out.println("All checks passed: " + allChecksPassed);
+                registrationAlert.setContentText("Registration Successful!");
 
 
 
                 validationText.setText("");
             } else {
                 System.out.println("Form invalid");
-                validationText.setText("All fields are required. Please complete the form");
+//                validationText.setText("All fields are required. Please complete the form");
+                registrationAlert.setContentText("Registration failed, please complete all fields");
             }
 
-
+            registrationAlert.setHeaderText(null);
+            registrationAlert.showAndWait();
+            WelcomePage(stage);
         });
 
         stage.setScene(scene);
