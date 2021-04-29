@@ -385,7 +385,7 @@ public class Main extends Application{
 
     void emailValidation(TextField field, Text validationText) {
         field.focusedProperty().addListener((arg0, oldValue, newValue) -> {
-            if (!newValue) { //when focus losts
+            if (!newValue) { //when focus is lost
                 if(!FormValidator.isValidEmail(field.getText())){
                     validationText.setText("Invalid email");
                     field.setStyle("-fx-text-box-border: #e81a2e; -fx-focus-color: #e81a2e;");
