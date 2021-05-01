@@ -11,10 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -416,7 +413,7 @@ public class GUI {
     }
     /* ============ END OF VALIDATION METHODS =============== */
 
-    void MainScreen(Stage stage) {
+    void MainScreen(Stage stage) throws FileNotFoundException {
         HBox topMenu = new HBox();
 
         Button profileBtn = new Button("My\nProfile");
@@ -452,21 +449,34 @@ public class GUI {
         leftMenu.getChildren().addAll(addFoodBtn, addExerciseBtn, addGoalBtn, groupBtn);
 
         Accordion accordion = new Accordion();
-        Text breakfastTxt =  new Text("[Placeholder text]");
-        Text lunchTxt = new Text("[Placeholder text]");
-        Text dinnerTxt = new Text("[Placeholder text]");
-        Text snackTxt = new Text("[Placeholder text]");
+        Text breakfastTxt =  new Text("You will see your added food here...");
+        breakfastTxt.setFill(Color.DARKGRAY);
+        breakfastTxt.setStyle("-fx-font-size: 15");
+        Text lunchTxt = new Text("You will see your added food here...");
+        lunchTxt.setFill(Color.DARKGRAY);
+        lunchTxt.setStyle("-fx-font-size: 15");
+        Text dinnerTxt = new Text("You will see your added food here...");
+        dinnerTxt.setFill(Color.DARKGRAY);
+        dinnerTxt.setStyle("-fx-font-size: 15");
+        Text snackTxt = new Text("You will see your added food here...");
+        snackTxt.setFill(Color.DARKGRAY);;
+        snackTxt.setStyle("-fx-font-size: 15");
 
         TitledPane breakfastPane = new TitledPane("Breakfast", breakfastTxt);
         TitledPane lunchPane = new TitledPane("Lunch", lunchTxt);
         TitledPane dinnerPane = new TitledPane("Dinner", dinnerTxt);
         TitledPane snackPane = new TitledPane("Snack", snackTxt);
-
-
+        breakfastPane.setAnimated(false);
+        breakfastPane.setPadding(new Insets(5, 0, 5, 0));
+        lunchPane.setAnimated(false);
+        lunchPane.setPadding(new Insets(5, 0, 5, 0));
+        dinnerPane.setAnimated(false);
+        dinnerPane.setPadding(new Insets(5, 0, 5, 0));
+        snackPane.setAnimated(false);
+        snackPane.setPadding(new Insets(5, 0, 5, 0));
 
         accordion.getPanes().addAll(breakfastPane, lunchPane, dinnerPane, snackPane);
         accordion.setPadding(new Insets(100, 0, 0, 50));
-//        accordion.setExpandedPane(breakfastPane);
 
         VBox vBox = new VBox();
         vBox.getChildren().add(accordion);
@@ -475,38 +485,50 @@ public class GUI {
         Button searchFoodBtn = new Button("Search");
         ComboBox mealChoice = new ComboBox();
         mealChoice.getItems().addAll("Breakfast", "Lunch", "Dinner", "Snack");
-        mealChoice.setPromptText("Choose meal");
-        Button closeBtn = new Button();
-//        closeBtn.setGraphic(new ImageView("/Users/winbarua/Documents/Software Engineering/_Project/FitTrack_Team3.08/imgs/crossIcon.png"));
+        mealChoice.getSelectionModel().selectFirst();
 
-        Image image = new Image("/Users/winbarua/Documents/Software Engineering/_Project/FitTrack_Team3.08/imgs/crossIcon.png");
-        ImageView imageView = new ImageView(image);
-        HBox hBox = new HBox();
-        hBox.getChildren().addAll(imageView, searchFoodField, mealChoice, searchFoodBtn);
-        hBox.setSpacing(20);
-        hBox.setVisible(false);
+        FileInputStream inputStream = new FileInputStream("/Users/winbarua/Documents/Software Engineering/_Project/FitTrack_Team3.08/imgs/crossIcon.png");
+        Image foodCloseIcon = new Image(inputStream);
+        ImageView foodCloseIconIV = new ImageView(foodCloseIcon);
+        foodCloseIconIV.setFitHeight(20);
+        foodCloseIconIV.setFitWidth(20);
+        Button closeBtn = new Button("", foodCloseIconIV);
+        closeBtn.setBackground(Background.EMPTY);
+        Text addFoodTxt = new Text("");
+
+        HBox addFoodHbox = new HBox();
+        addFoodHbox.getChildren().addAll(closeBtn, searchFoodField, mealChoice, searchFoodBtn, addFoodTxt);
+        addFoodHbox.setSpacing(20);
+        addFoodHbox.setVisible(false);
 
         BorderPane borderPane = new BorderPane();
         borderPane.setPadding(new Insets(50));
         borderPane.setTop(topMenu);
         borderPane.setLeft(leftMenu);
         borderPane.setCenter(vBox);
-
-        borderPane.setBottom(hBox);
-
+        borderPane.setBottom(addFoodHbox);
 
         addFoodBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if (hBox.isVisible()) {
-                    hBox.setVisible(false);
-                } else {
-                    hBox.setVisible(true);
-                }
+                addFoodHbox.setVisible(true);
             }
         });
 
-        StringBuilder sb = new StringBuilder();
+        closeBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                addFoodHbox.setVisible(false);
+                addFoodTxt.setText("");
+                searchFoodField.setText("");
+                searchFoodField.setPromptText("Enter food..");
+            }
+        });
+
+        StringBuilder breakfastsb = new StringBuilder();
+        StringBuilder lunchsb = new StringBuilder();
+        StringBuilder dinnersb = new StringBuilder();
+        StringBuilder snacksb = new StringBuilder();
         searchFoodBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -518,11 +540,35 @@ public class GUI {
                         e.printStackTrace();
                     }
 
-                    sb.append(food.getName() + " - " + food.getCalories());
-                    sb.append("\n");
+                    int mealChoiceIndex = mealChoice.getSelectionModel().getSelectedIndex();
+                    if (food.getCalories() != 0) {
 
-                    if (food.getName().equals(""))
-                    breakfastTxt.setText(sb.toString());
+                        if (mealChoiceIndex == 0) {
+                            breakfastsb.append(food.getName() + " - " + food.getCalories() + " cal");
+                            breakfastsb.append("\n");
+                            breakfastTxt.setText(breakfastsb.toString());
+                        } else if (mealChoiceIndex == 1) {
+                            lunchsb.append(food.getName() + " - " + food.getCalories() + " cal");
+                            lunchsb.append("\n");
+                            lunchTxt.setText(lunchsb.toString());
+                        } else if (mealChoiceIndex == 2) {
+                            dinnersb.append(food.getName() + " - " + food.getCalories() + " cal");
+                            dinnersb.append("\n");
+                            dinnerTxt.setText(dinnersb.toString());
+                        } else if (mealChoiceIndex == 3) {
+                            snacksb.append(food.getName() + " - " + food.getCalories() + " cal");
+                            snacksb.append("\n");
+                            snackTxt.setText(snacksb.toString());
+                        }
+
+
+                        addFoodTxt.setFill(Color.GREEN);
+                        addFoodTxt.setText("Food added!");
+
+                    } else {
+                        addFoodTxt.setFill(Color.RED);
+                        addFoodTxt.setText("Food not found..");
+                    }
                 }
             }
         });

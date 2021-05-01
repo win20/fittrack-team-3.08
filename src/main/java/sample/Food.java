@@ -55,7 +55,7 @@ public class Food {
                 .header("x-rapidapi-host", "calorieninjas.p.rapidapi.com")
                 .asString();
 
-//        System.out.println(response.getBody());
+        System.out.println(response.getBody());
         parse(response.getBody());
     }
     public String parse(String responseBody) {
@@ -79,6 +79,5 @@ public class Food {
 
         Food food = new Food();
         food.ConnectToAPI(httpQuery);
-
     }
 }
