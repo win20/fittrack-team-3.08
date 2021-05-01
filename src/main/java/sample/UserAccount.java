@@ -215,7 +215,7 @@ public class UserAccount {
     }
 
     public String getUserInfo() {
-        return  userId + "," + fname + "," + sname + "," + email + "," + password + "," + age + "," + height + "," +
+        return  userId + "," + fname + "," + sname + "," + email + "," + age + "," + height + "," +
                 weight + "," + gender + "," + activityLevelIndex + "," + bmi + "," + idealWeight + "," + dailyCalories +
                 "," + activityLevel + "," + weightGoal;
     }

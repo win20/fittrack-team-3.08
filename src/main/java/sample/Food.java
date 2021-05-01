@@ -21,6 +21,22 @@ public class Food {
         this.calories = calories;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCalories(int calories) {
+        this.calories = calories;
+    }
+
+    public int getCalories() {
+        return calories;
+    }
+
     @Override
     public String toString() {
         return "Food{" +
@@ -39,21 +55,19 @@ public class Food {
                 .header("x-rapidapi-host", "calorieninjas.p.rapidapi.com")
                 .asString();
 
-        System.out.println(response.getBody());
+//        System.out.println(response.getBody());
         parse(response.getBody());
     }
     public String parse(String responseBody) {
         JSONObject tmp = new JSONObject(responseBody);
         JSONArray itemsArray = tmp.getJSONArray("items");
-        System.out.println(itemsArray.toString());
 
         for (int i = 0; i < itemsArray.length(); i++) {
             JSONObject foodObj = itemsArray.getJSONObject(i);
-
             this.name = foodObj.getString("name");
             this.calories = foodObj.getInt("calories");
-            System.out.println("Name: " + this.name);
-            System.out.println("Calories: " + this.calories);
+//            System.out.println("Name: " + this.name);
+//            System.out.println("Calories: " + this.calories);
         }
         return null;
     }

@@ -20,7 +20,7 @@ public class DatabaseHandler {
         String filePath = "users.csv";
         CSVWriter writer = new CSVWriter(new FileWriter(filePath, false));
 
-        String[] heading = ("ID,first_name,last_name,email,password,age,height,weight,gender," +
+        String[] heading = ("ID,first_name,last_name,email,age,height,weight,gender," +
                 "activity_level_index,bmi,ideal_weight,daily_calories,activity_level,weight_goal").split(",");
         writer.writeNext(heading);
         writer.close();
