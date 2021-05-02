@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GUI {
 
     UserAccount userAccount;
+    int userCaloriesRemaining = 0;
     byte[] salt;
     int user_id = 0;
     public int getUser_id() {
@@ -424,7 +425,7 @@ public class GUI {
         profileBtn.setStyle("-fx-font-size: 18");
         profileBtn.setPrefSize(80,80);
 
-        int userCaloriesRemaining = userAccount.getDailyCalories();
+        userCaloriesRemaining = userAccount.getDailyCalories();
         Text caloriesTxt = new Text("Calories remaining: " + userCaloriesRemaining);
         caloriesTxt.setStyle("-fx-font-size: 25");
         caloriesTxt.setFill(Color.web("#8a8a8a"));
@@ -491,18 +492,20 @@ public class GUI {
         ComboBox mealChoice = new ComboBox();
         mealChoice.getItems().addAll("Breakfast", "Lunch", "Dinner", "Snack");
         mealChoice.getSelectionModel().selectFirst();
+        TextField servingSizeField = new TextField();
+        servingSizeField.setPromptText("Serving size(g)");
 
-        FileInputStream inputStream = new FileInputStream("/Users/winbarua/Documents/Software Engineering/_Project/FitTrack_Team3.08/imgs/crossIcon.png");
-        Image foodCloseIcon = new Image(inputStream);
-        ImageView foodCloseIconIV = new ImageView(foodCloseIcon);
-        foodCloseIconIV.setFitHeight(20);
-        foodCloseIconIV.setFitWidth(20);
-        Button closeBtn = new Button("", foodCloseIconIV);
-        closeBtn.setBackground(Background.EMPTY);
+//        FileInputStream inputStream = new FileInputStream("/Users/winbarua/Documents/Software Engineering/_Project/FitTrack_Team3.08/imgs/crossIcon.png");
+//        Image foodCloseIcon = new Image(inputStream);
+//        ImageView foodCloseIconIV = new ImageView(foodCloseIcon);
+//        foodCloseIconIV.setFitHeight(20);
+//        foodCloseIconIV.setFitWidth(20);
+//        Button closeBtn = new Button("", foodCloseIconIV);
+//        closeBtn.setBackground(Background.EMPTY);
         Text addFoodTxt = new Text("");
 
         HBox addFoodHbox = new HBox();
-        addFoodHbox.getChildren().addAll(closeBtn, searchFoodField, mealChoice, searchFoodBtn, addFoodTxt);
+        addFoodHbox.getChildren().addAll(searchFoodField, mealChoice, servingSizeField, searchFoodBtn, addFoodTxt);
         addFoodHbox.setSpacing(20);
         addFoodHbox.setVisible(false);
 
@@ -520,15 +523,15 @@ public class GUI {
             }
         });
 
-        closeBtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                addFoodHbox.setVisible(false);
-                addFoodTxt.setText("");
-                searchFoodField.setText("");
-                searchFoodField.setPromptText("Enter food..");
-            }
-        });
+//        closeBtn.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent actionEvent) {
+//                addFoodHbox.setVisible(false);
+//                addFoodTxt.setText("");
+//                searchFoodField.setText("");
+//                searchFoodField.setPromptText("Enter food..");
+//            }
+//        });
 
         StringBuilder breakfastsb = new StringBuilder();
         StringBuilder lunchsb = new StringBuilder();
@@ -567,6 +570,8 @@ public class GUI {
                         }
                         addFoodTxt.setFill(Color.GREEN);
                         addFoodTxt.setText("Food added!");
+                        userCaloriesRemaining = userCaloriesRemaining - food.getCalories();
+                        caloriesTxt.setText("Calories remaining: " + userCaloriesRemaining);
 
                     } else {
                         addFoodTxt.setFill(Color.RED);

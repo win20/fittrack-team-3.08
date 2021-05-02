@@ -13,6 +13,7 @@ import java.util.Scanner;
 public class Food {
     private String name;
     private int calories;
+    private int servingSize;
 
     Food(){}
 
@@ -21,21 +22,16 @@ public class Food {
         this.calories = calories;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
     public void setCalories(int calories) {
         this.calories = calories;
     }
+    public int getCalories() { return calories; }
 
-    public int getCalories() {
-        return calories;
-    }
+    public int getServingSize() { return servingSize; }
+    public void setServingSize(int servingSize) { this.servingSize = servingSize; }
 
     @Override
     public String toString() {
@@ -66,8 +62,9 @@ public class Food {
             JSONObject foodObj = itemsArray.getJSONObject(i);
             this.name = foodObj.getString("name");
             this.calories = foodObj.getInt("calories");
+            this.servingSize = foodObj.getInt("serving_size_g");
 //            System.out.println("Name: " + this.name);
-//            System.out.println("Calories: " + this.calories);
+//            System.out.println("serving: " + this.servingSize);
         }
         return null;
     }
