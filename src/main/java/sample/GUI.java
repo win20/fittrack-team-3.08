@@ -18,6 +18,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import org.apache.commons.logging.Log;
 
 import javax.swing.*;
 import java.io.*;
@@ -26,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class GUI {
 
+    UserAccount userAccount;
     byte[] salt;
     int user_id = 0;
     public int getUser_id() {
@@ -102,6 +104,9 @@ public class GUI {
                     alert.setHeaderText(null);
                     if (isLoginSuccessful) {
                         alert.setContentText("Login Successful");
+
+                        int id = DatabaseHandler.returnUserId(emailField.getText());
+                        userAccount = DatabaseHandler.returnUserAccount(id);
                         MainScreen(stage);
                     } else {
                         alert.setContentText("Login Failed");
@@ -314,7 +319,6 @@ public class GUI {
                     e.printStackTrace();
                 }
 
-
                 System.out.println("All checks passed: " + allChecksPassed);
                 registrationAlert.setContentText("Registration Successful!");
 
@@ -420,7 +424,8 @@ public class GUI {
         profileBtn.setStyle("-fx-font-size: 18");
         profileBtn.setPrefSize(80,80);
 
-        Text caloriesTxt = new Text("Calories remaining: 2000");
+        int userCaloriesRemaining = userAccount.getDailyCalories();
+        Text caloriesTxt = new Text("Calories remaining: " + userCaloriesRemaining);
         caloriesTxt.setStyle("-fx-font-size: 25");
         caloriesTxt.setFill(Color.web("#8a8a8a"));
 
@@ -560,8 +565,6 @@ public class GUI {
                             snacksb.append("\n");
                             snackTxt.setText(snacksb.toString());
                         }
-
-
                         addFoodTxt.setFill(Color.GREEN);
                         addFoodTxt.setText("Food added!");
 
@@ -570,6 +573,13 @@ public class GUI {
                         addFoodTxt.setText("Food not found..");
                     }
                 }
+            }
+        });
+
+        logoutBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                LoginPage(stage);
             }
         });
 

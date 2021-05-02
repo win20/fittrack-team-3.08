@@ -29,8 +29,8 @@ public class Main extends Application{
         primaryStage.setMinHeight(700);
 
         GUI gui = new GUI();
-//        gui.LoginPage(primaryStage);;
-        gui.MainScreen(primaryStage);
+        gui.LoginPage(primaryStage);
+//        gui.MainScreen(primaryStage);
     }
 
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException {

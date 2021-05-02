@@ -1,3 +1,4 @@
-"ID","first_name","last_name","email","age","height","weight","gender","activity_level_index","bmi","ideal_weight","daily_calories","activity_level","weight_goal"
-"0","Win","Barua","win.barua2@gmail.com","22","2.2","22.0","Male","3","4.5","20.9","2273","HEAVY_EXERCISE","MAINTAIN"
-"1","Hello","Test","test@gmail.com","33","3.3","33.0","Female","3","3.0","25.5","2833","HEAVY_EXERCISE","GAIN"
+"ID","first_name","last_name","email","age","height","weight","gender_index","activity_level_index","weight_goal_index","bmi","daily_calories"
+"0","Win","Barua","win.barua2@gmail.com","33","3.3","33.0","0","1","2","3.0","3073"
+"1","John ","Smith","jsmith@gmail.com","23","3.3","23.0","0","1","1","2.1","2578"
+"2","Test","Testing","testing@gmail.com","45","3.4","32.0","1","4","0","2.8","2189"

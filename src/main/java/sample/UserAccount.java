@@ -22,6 +22,7 @@ public class UserAccount {
     private int activityLevelIndex;
     private float bmi, idealWeight;
     private int dailyCalories;
+    private int weightGoalIndex;
 
     private enum ActivityLevel {
         SEDENTARY(1.2f),
@@ -56,61 +57,44 @@ public class UserAccount {
 
 
     public int getGenderIndex() { return genderIndex; }
-
     public int getUserId() { return userId; }
-
     public String getFname() {
         return fname;
     }
-
     public String getSname() {
         return sname;
     }
-
     public String getEmail() {
         return email;
     }
-
     public String getPassword() {
         return password;
     }
-
     public int getAge() {
         return age;
     }
-
-    public float getHeight() {
-        return height;
-    }
-
+    public float getHeight() { return height; }
     public float getWeight() {
         return weight;
     }
-
     public String getGender() {
         return gender;
     }
-
     public int getActivityLevelIndex() {
         return activityLevelIndex;
     }
-
     public float getBmi() {
         return bmi;
     }
-
     public float getIdealWeight() {
         return idealWeight;
     }
-
     public int getDailyCalories() {
         return dailyCalories;
     }
-
     public WeightGoal getWeightGoal() {
         return weightGoal;
     }
-
     public ActivityLevel getActivityLevel() {
         return activityLevel;
     }
@@ -168,6 +152,9 @@ public class UserAccount {
         this.dailyCalories = dailyCalories;
     }
 
+    public void setWeightGoalIndex (int weightGoalIndex) { this.weightGoalIndex = weightGoalIndex; }
+
+    UserAccount() {}
 
     // User constructor, gets all information that user has provided and sets appropriate attributes..
     // .. dailyCalories, BMI and idealWeight are calculated later using this first set of data
@@ -182,6 +169,8 @@ public class UserAccount {
         this.height = height;
         this.weight = weight;
         this.activityLevelIndex = activityLevelIndex;
+        this.weightGoalIndex = goalIndex;
+        this.genderIndex = genderIndex;
 
         SetGender(genderIndex);
         SetActivityLevel(activityLevelIndex);
@@ -216,9 +205,11 @@ public class UserAccount {
 
     public String getUserInfo() {
         return  userId + "," + fname + "," + sname + "," + email + "," + age + "," + height + "," +
-                weight + "," + gender + "," + activityLevelIndex + "," + bmi + "," + idealWeight + "," + dailyCalories +
-                "," + activityLevel + "," + weightGoal;
+                weight + "," + genderIndex + "," + activityLevelIndex + "," +  weightGoalIndex + "," +
+                bmi + "," + dailyCalories;
     }
+
+
 
     public void incUserId() {
         userId += 1;

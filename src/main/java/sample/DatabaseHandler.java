@@ -2,16 +2,14 @@ package sample;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
+import com.opencsv.exceptions.CsvValidationException;
 
 import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class DatabaseHandler {
 
@@ -20,8 +18,8 @@ public class DatabaseHandler {
         String filePath = "users.csv";
         CSVWriter writer = new CSVWriter(new FileWriter(filePath, false));
 
-        String[] heading = ("ID,first_name,last_name,email,age,height,weight,gender," +
-                "activity_level_index,bmi,ideal_weight,daily_calories,activity_level,weight_goal").split(",");
+        String[] heading = ("ID,first_name,last_name,email,age,height,weight,gender_index," +
+                "activity_level_index,weight_goal_index,bmi,daily_calories").split(",");
         writer.writeNext(heading);
         writer.close();
     }
@@ -155,7 +153,6 @@ public class DatabaseHandler {
             // we are going to read data line by line
             int i = -1;
             while ((nextRecord = csvReader.readNext()) != null) {
-//                System.out.println(Arrays.toString(nextRecord));
                 if (i == id) {
                     return nextRecord;
                 }
@@ -169,30 +166,60 @@ public class DatabaseHandler {
         return null;
     }
 
+    public static UserAccount returnUserAccount(int id) throws IOException, CsvValidationException {
+        FileReader fileReader = new FileReader("users.csv");
+        CSVReader csvReader = new CSVReader(fileReader);
+        String[] nextRecord;
+        UserAccount userAccount = new UserAccount();
+
+        int i = -1;
+        while ((nextRecord = csvReader.readNext()) != null) {
+            if (i == id) {
+                System.out.println(Arrays.toString(nextRecord));
+                userAccount.setUserId(Integer.parseInt(nextRecord[0]));
+                userAccount.setFname(nextRecord[1]);
+                userAccount.setSname(nextRecord[2]);
+                userAccount.setEmail(nextRecord[3]);
+                userAccount.setAge(Integer.parseInt(nextRecord[4]));
+                userAccount.setHeight(Float.parseFloat(nextRecord[5]));
+                userAccount.setWeight(Float.parseFloat(nextRecord[6]));
+                userAccount.setGender(nextRecord[7]);
+                userAccount.setActivityLevelIndex(Integer.parseInt(nextRecord[8]));
+                userAccount.setWeightGoalIndex(Integer.parseInt(nextRecord[9]));
+                userAccount.setBmi(Float.parseFloat(nextRecord[10]));
+                userAccount.setDailyCalories(Integer.parseInt(nextRecord[11]));
+            }
+            i += 1;
+        }
+        return userAccount;
+    }
 
     public static byte[] salt;
     public static void main(String[] args) throws Exception
     {
-        Scanner in = new Scanner(System.in);
-        System.out.println("Enter email");
-        String email = in.next();
+//        Scanner in = new Scanner(System.in);
+//        System.out.println("Enter email");
+//        String email = in.next();
+//
+//        int id = returnUserId(email);
+//        System.out.println("ID: " + id);
+//
+//        String[] str = readPasswordAndHash(returnUserId(email));
+//        String password = str[1];
+//        String saltHex = str[2];
+//
+//        salt = PasswordHasher.hexToByteArray(saltHex);
+//
+//        System.out.println("Enter password");
+//        String passInput = in.next();
+//
+//        if (id != -1 && PasswordHasher.checkPassword(password, passInput, salt)) {
+//            System.out.println("Login Successful");
+//        } else {
+//            System.out.println("Login Failed");
+//        }
 
-        int id = returnUserId(email);
-        System.out.println("ID: " + id);
-
-        String[] str = readPasswordAndHash(returnUserId(email));
-        String password = str[1];
-        String saltHex = str[2];
-
-        salt = PasswordHasher.hexToByteArray(saltHex);
-
-        System.out.println("Enter password");
-        String passInput = in.next();
-
-        if (id != -1 && PasswordHasher.checkPassword(password, passInput, salt)) {
-            System.out.println("Login Successful");
-        } else {
-            System.out.println("Login Failed");
-        }
+        UserAccount userAccount = DatabaseHandler.returnUserAccount(1);
+        System.out.println(userAccount.toString());
     }
 }
