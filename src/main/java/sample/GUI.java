@@ -550,28 +550,36 @@ public class GUI {
 
                     int mealChoiceIndex = mealChoice.getSelectionModel().getSelectedIndex();
                     if (food.getCalories() != 0) {
+                        float servingSizeMult = Float.parseFloat(servingSizeField.getText()) / 100;
+                        int totalCalEaten = (int)(food.getCalories() * servingSizeMult);
+                        userCaloriesRemaining = userCaloriesRemaining - totalCalEaten;
+                        caloriesTxt.setText("Calories remaining: " + userCaloriesRemaining);
 
                         if (mealChoiceIndex == 0) {
-                            breakfastsb.append(food.getName() + " - " + food.getCalories() + " cal");
+                            breakfastsb.append(food.getName() + " - " + food.getCalories() + " cal/100g" + "; serving(g): " +
+                                    servingSizeField.getText() + "; total calories: " + totalCalEaten);
                             breakfastsb.append("\n");
                             breakfastTxt.setText(breakfastsb.toString());
                         } else if (mealChoiceIndex == 1) {
-                            lunchsb.append(food.getName() + " - " + food.getCalories() + " cal");
+                            lunchsb.append(food.getName() + " - " + food.getCalories() + " cal/100g" + "; serving(g): " +
+                                    servingSizeField.getText() + "; total calories: " + totalCalEaten);
                             lunchsb.append("\n");
                             lunchTxt.setText(lunchsb.toString());
                         } else if (mealChoiceIndex == 2) {
-                            dinnersb.append(food.getName() + " - " + food.getCalories() + " cal");
+                            dinnersb.append(food.getName() + " - " + food.getCalories() + " cal/100g" + "; serving(g): " +
+                                    servingSizeField.getText() + "; total calories: " + totalCalEaten);
                             dinnersb.append("\n");
                             dinnerTxt.setText(dinnersb.toString());
                         } else if (mealChoiceIndex == 3) {
-                            snacksb.append(food.getName() + " - " + food.getCalories() + " cal");
+                            snacksb.append(food.getName() + " - " + food.getCalories() + " cal/100g" + "; serving(g): " +
+                                    servingSizeField.getText() + "; total calories: " + totalCalEaten);
                             snacksb.append("\n");
                             snackTxt.setText(snacksb.toString());
                         }
                         addFoodTxt.setFill(Color.GREEN);
                         addFoodTxt.setText("Food added!");
-                        userCaloriesRemaining = userCaloriesRemaining - food.getCalories();
-                        caloriesTxt.setText("Calories remaining: " + userCaloriesRemaining);
+                        
+//                        System.out.println(servingSizeMult);
 
                     } else {
                         addFoodTxt.setFill(Color.RED);
@@ -601,8 +609,5 @@ public class GUI {
         food.ConnectToAPI("tomato");
         System.out.println("name: " + food.getName());
         System.out.println("calories: " + food.getCalories());
-
-
     }
-
 }
