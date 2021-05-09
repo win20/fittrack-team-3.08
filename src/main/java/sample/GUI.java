@@ -2,6 +2,7 @@ package sample;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.opencsv.exceptions.CsvException;
+import com.sun.javafx.menu.MenuItemBase;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -31,6 +32,7 @@ public class GUI {
     int userCaloriesRemaining = 0;
     byte[] salt;
     int user_id = 0;
+
     public int getUser_id() {
         return user_id;
     }
@@ -39,7 +41,7 @@ public class GUI {
         int tmp = DatabaseHandler.getLastUserId("users.csv");
         user_id = tmp + 1;
     }
-
+//void ex page
     void LoginPage(Stage stage) {
         String fontName = "Arial";
 
@@ -587,6 +589,16 @@ public class GUI {
                     }
                 }
             }
+
+
+        });
+
+
+        addExerciseBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                exercisePage(stage);
+            }
         });
 
         logoutBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -600,6 +612,44 @@ public class GUI {
         stage.setScene(scene);
         stage.show();
     }
+
+    void exercisePage(Stage stage){
+
+        VBox vBox = new VBox();
+        Button backBtn = new Button("Back");
+        //comboBox for time
+        //back button
+        //submit button
+
+        ComboBox comboBox = new ComboBox();
+
+        comboBox.getItems().add("running");
+        comboBox.getItems().add("swimming");
+        comboBox.getItems().add("walking");
+        ChoiceBox genderChoiceBox = new ChoiceBox();
+        genderChoiceBox.getItems().add("Male");
+
+        Text text = new Text("Hello");
+
+        vBox.getChildren().addAll(comboBox, text, backBtn);
+
+        Scene scene = new Scene(vBox);
+        stage.setScene(scene);
+        stage.show();
+
+        backBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    MainScreen(stage);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+    }
+
 
     public static void main(String[] args) throws UnirestException {
         Food food = new Food();
