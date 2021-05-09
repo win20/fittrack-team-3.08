@@ -2,6 +2,7 @@ package sample;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.opencsv.exceptions.CsvException;
+import com.opencsv.exceptions.CsvValidationException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -11,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -19,13 +21,20 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.apache.commons.logging.Log;
+import javafx.application.Application;
+import javafx.application.HostServices;
+
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+
+import java.lang.Object;
 
 import javax.swing.*;
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class GUI {
+public class GUI extends Application {
 
     UserAccount userAccount;
     int userCaloriesRemaining = 0;
@@ -34,6 +43,13 @@ public class GUI {
     public int getUser_id() {
         return user_id;
     }
+
+
+    final String mealMsg = "You will see the food you have added here...";
+    StringBuilder breakfastsb = new StringBuilder(mealMsg);
+    StringBuilder lunchsb = new StringBuilder(mealMsg);
+    StringBuilder dinnersb = new StringBuilder(mealMsg);
+    StringBuilder snacksb = new StringBuilder(mealMsg);
 
     public void incUserID() {
         int tmp = DatabaseHandler.getLastUserId("users.csv");
@@ -291,7 +307,7 @@ public class GUI {
                 incUserID();
             } else {
                 try {
-                    DatabaseHandler.InitDatabase();
+                    DatabaseHandler.InitDatabase("users.csv");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -455,16 +471,16 @@ public class GUI {
         leftMenu.getChildren().addAll(addFoodBtn, addExerciseBtn, addGoalBtn, groupBtn);
 
         Accordion accordion = new Accordion();
-        Text breakfastTxt =  new Text("You will see your added food here...");
+        Text breakfastTxt =  new Text(breakfastsb.toString());
         breakfastTxt.setFill(Color.DARKGRAY);
         breakfastTxt.setStyle("-fx-font-size: 15");
-        Text lunchTxt = new Text("You will see your added food here...");
+        Text lunchTxt = new Text(lunchsb.toString());
         lunchTxt.setFill(Color.DARKGRAY);
         lunchTxt.setStyle("-fx-font-size: 15");
-        Text dinnerTxt = new Text("You will see your added food here...");
+        Text dinnerTxt = new Text(dinnersb.toString());
         dinnerTxt.setFill(Color.DARKGRAY);
         dinnerTxt.setStyle("-fx-font-size: 15");
-        Text snackTxt = new Text("You will see your added food here...");
+        Text snackTxt = new Text(snacksb.toString());
         snackTxt.setFill(Color.DARKGRAY);;
         snackTxt.setStyle("-fx-font-size: 15");
 
@@ -495,17 +511,17 @@ public class GUI {
         TextField servingSizeField = new TextField();
         servingSizeField.setPromptText("Serving size(g)");
 
-//        FileInputStream inputStream = new FileInputStream("/Users/winbarua/Documents/Software Engineering/_Project/FitTrack_Team3.08/imgs/crossIcon.png");
-//        Image foodCloseIcon = new Image(inputStream);
-//        ImageView foodCloseIconIV = new ImageView(foodCloseIcon);
-//        foodCloseIconIV.setFitHeight(20);
-//        foodCloseIconIV.setFitWidth(20);
-//        Button closeBtn = new Button("", foodCloseIconIV);
-//        closeBtn.setBackground(Background.EMPTY);
+        String path = "file:imgs/crossIcon.png";
+        Image foodCloseIcon = new Image(path);
+        ImageView foodCloseIconIV = new ImageView(foodCloseIcon);
+        foodCloseIconIV.setFitHeight(20);
+        foodCloseIconIV.setFitWidth(20);
+        Button closeBtn = new Button("", foodCloseIconIV);
+        closeBtn.setBackground(Background.EMPTY);
         Text addFoodTxt = new Text("");
 
         HBox addFoodHbox = new HBox();
-        addFoodHbox.getChildren().addAll(searchFoodField, mealChoice, servingSizeField, searchFoodBtn, addFoodTxt);
+        addFoodHbox.getChildren().addAll(closeBtn, searchFoodField, mealChoice, servingSizeField, searchFoodBtn, addFoodTxt);
         addFoodHbox.setSpacing(20);
         addFoodHbox.setVisible(false);
 
@@ -523,20 +539,16 @@ public class GUI {
             }
         });
 
-//        closeBtn.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent actionEvent) {
-//                addFoodHbox.setVisible(false);
-//                addFoodTxt.setText("");
-//                searchFoodField.setText("");
-//                searchFoodField.setPromptText("Enter food..");
-//            }
-//        });
+        closeBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                addFoodHbox.setVisible(false);
+                addFoodTxt.setText("");
+                searchFoodField.setText("");
+                searchFoodField.setPromptText("Enter food..");
+            }
+        });
 
-        StringBuilder breakfastsb = new StringBuilder();
-        StringBuilder lunchsb = new StringBuilder();
-        StringBuilder dinnersb = new StringBuilder();
-        StringBuilder snacksb = new StringBuilder();
         searchFoodBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -555,22 +567,29 @@ public class GUI {
                         userCaloriesRemaining = userCaloriesRemaining - totalCalEaten;
                         caloriesTxt.setText("Calories remaining: " + userCaloriesRemaining);
 
+                        userAccount.setDailyCalories(userCaloriesRemaining);
+                        DatabaseHandler.UpdateRecord(userAccount.getUserId(), userAccount);
+
                         if (mealChoiceIndex == 0) {
+                            breakfastsb = new StringBuilder();
                             breakfastsb.append(food.getName() + " - " + food.getCalories() + " cal/100g" + "; serving(g): " +
                                     servingSizeField.getText() + "; total calories: " + totalCalEaten);
                             breakfastsb.append("\n");
                             breakfastTxt.setText(breakfastsb.toString());
                         } else if (mealChoiceIndex == 1) {
+                            lunchsb = new StringBuilder();
                             lunchsb.append(food.getName() + " - " + food.getCalories() + " cal/100g" + "; serving(g): " +
                                     servingSizeField.getText() + "; total calories: " + totalCalEaten);
                             lunchsb.append("\n");
                             lunchTxt.setText(lunchsb.toString());
                         } else if (mealChoiceIndex == 2) {
+                            dinnersb = new StringBuilder();
                             dinnersb.append(food.getName() + " - " + food.getCalories() + " cal/100g" + "; serving(g): " +
                                     servingSizeField.getText() + "; total calories: " + totalCalEaten);
                             dinnersb.append("\n");
                             dinnerTxt.setText(dinnersb.toString());
                         } else if (mealChoiceIndex == 3) {
+                            snacksb = new StringBuilder();
                             snacksb.append(food.getName() + " - " + food.getCalories() + " cal/100g" + "; serving(g): " +
                                     servingSizeField.getText() + "; total calories: " + totalCalEaten);
                             snacksb.append("\n");
@@ -578,8 +597,6 @@ public class GUI {
                         }
                         addFoodTxt.setFill(Color.GREEN);
                         addFoodTxt.setText("Food added!");
-                        
-//                        System.out.println(servingSizeMult);
 
                     } else {
                         addFoodTxt.setFill(Color.RED);
@@ -596,6 +613,254 @@ public class GUI {
             }
         });
 
+        groupBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                UserGroupPage(stage);
+            }
+        });
+
+        addGoalBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    GoalsPage(stage);
+                } catch (IOException | CsvValidationException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Scene scene = new Scene(borderPane);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    void UserGroupPage(Stage stage) {
+        VBox vBox = new VBox();
+        vBox.setAlignment(Pos.CENTER);
+        Text pageTitle=  new Text("Groups");
+        pageTitle.setStyle("-fx-font-size: 30;");
+        vBox.setPadding(new Insets(20));
+
+        HBox hBox = new HBox();
+        Button backBtn = new Button("Back");
+        backBtn.setPrefSize(100, 40);
+        Button createBtn = new Button("Create");
+        createBtn.setPrefSize(100, 40);
+        Button joinBtn = new Button("Join");
+        joinBtn.setPrefSize(100, 40);
+        hBox.getChildren().addAll(backBtn, createBtn, joinBtn);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setPadding(new Insets(50, 25, 25, 25));
+        hBox.setSpacing(50);
+
+        VBox vBox1 = new VBox();
+        Text groupText = new Text("You are not part of a group yet, please join or create one...");
+        groupText.setFill(Color.web("#7a7a7a"));
+
+        groupText.setTextAlignment(TextAlignment.CENTER);
+        vBox1.getChildren().addAll(groupText);
+        vBox1.setAlignment(Pos.BASELINE_CENTER);
+        vBox1.setStyle("-fx-background-color: #e0e0e0");
+        vBox1.setMinSize(200, 400);
+
+        vBox.getChildren().addAll(pageTitle, hBox, vBox1);
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setTop(vBox);
+
+        backBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    MainScreen(stage);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Scene scene = new Scene(borderPane);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    String weightGoal = "Weight goal: You haven't added a goal yet...";
+    String currentWeight = "Current weight: Please register your current weight...";
+    void GoalsPage(Stage stage) throws IOException, CsvValidationException {
+        VBox vBox = new VBox();
+        vBox.setAlignment(Pos.CENTER);
+        Text pageTitle = new Text("Goals");
+        pageTitle.setStyle("-fx-font-size: 30;");
+        vBox.setPadding(new Insets(20));
+
+        HBox hBox = new HBox();
+        Button backBtn = new Button("Back");
+        backBtn.setPrefSize(100, 40);
+        Button changeGoalBtn = new Button("Change goal");
+        changeGoalBtn.setPrefSize(100, 40);
+        Button trackWeightBtn = new Button("Track weight");
+        trackWeightBtn.setPrefSize(100, 40);
+        hBox.getChildren().addAll(backBtn, changeGoalBtn, trackWeightBtn);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setPadding(new Insets(50, 25, 25, 25));
+        hBox.setSpacing(50);
+
+        VBox vBox1 = new VBox();
+
+        if (DatabaseHandler.CheckID(userAccount.getUserId(), "goals.csv")) {
+            System.out.println("exists");
+            DatabaseHandler.LoadGoalData(userAccount.getUserId(), weightGoal, currentWeight);
+        } else {
+            System.out.println("Doesn't exist");
+        }
+
+        Text currentWeightGoalTxt = new Text(weightGoal);
+        currentWeightGoalTxt.setFill(Color.web("#7a7a7a"));
+        currentWeightGoalTxt.setStyle("-fx-font-size: 20;");
+        Text weightTxt = new Text(currentWeight);
+        weightTxt.setFill(Color.web("#7a7a7a"));
+        weightTxt.setStyle("-fx-font-size: 20;");
+
+        vBox1.getChildren().addAll(currentWeightGoalTxt, weightTxt);
+        vBox1.setStyle("-fx-background-color: #e0e0e0;");
+        vBox1.setMinSize(200, 350);
+        vBox1.setPadding(new Insets(20));
+        vBox.getChildren().addAll(pageTitle, hBox, vBox1);
+
+        // ********* Display for changing weight goal ********** //
+        HBox changeGoalHBox = new HBox();
+        Text text = new Text("Change your current weight goal:");
+        TextField changeGoalField = new TextField();
+        Button changeGoalSubmitBtn = new Button("Change");
+        Text validationTxt = new Text("");
+
+        String path = "file:imgs/crossIcon.png";
+        Image foodCloseIcon = new Image(path);
+        ImageView foodCloseIconIV = new ImageView(foodCloseIcon);
+        foodCloseIconIV.setFitHeight(20);
+        foodCloseIconIV.setFitWidth(20);
+        Button closeBtn = new Button("", foodCloseIconIV);
+        closeBtn.setBackground(Background.EMPTY);
+        closeBtn.setPadding(new Insets(0,0,15,0));
+
+        changeGoalHBox.getChildren().addAll(closeBtn, text, changeGoalField, changeGoalSubmitBtn, validationTxt);
+        changeGoalHBox.setPadding(new Insets(0,0,50,20));
+        changeGoalHBox.setSpacing(30);
+        changeGoalHBox.setVisible(false);
+        // ******************************************************* //
+
+        // ********* Display for changing current weight ********** //
+        HBox currentWeightHBox = new HBox();
+        Text currentWeightTxt = new Text("Track your current weight:");
+        TextField currentWeightField = new TextField();
+        Button trackWeightSubmitBtn = new Button("Change");
+        Text validationTxt2 = new Text("");
+
+        String path2 = "file:imgs/crossIcon.png";
+        Image foodCloseIcon2 = new Image(path2);
+        ImageView foodCloseIconIV2 = new ImageView(foodCloseIcon2);
+        foodCloseIconIV2.setFitHeight(20);
+        foodCloseIconIV2.setFitWidth(20);
+        Button closeBtn2 = new Button("", foodCloseIconIV2);
+        closeBtn2.setBackground(Background.EMPTY);
+        closeBtn2.setPadding(new Insets(0,0,15,0));
+
+        currentWeightHBox.getChildren().addAll(closeBtn2, currentWeightTxt, currentWeightField, trackWeightSubmitBtn, validationTxt2);
+        currentWeightHBox.setPadding(new Insets(0,0,50,20));
+        currentWeightHBox.setSpacing(30);
+        currentWeightHBox.setVisible(false);
+        // ******************************************************* //
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setTop(vBox);
+        borderPane.setBottom(currentWeightHBox);
+
+        changeGoalBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                borderPane.setBottom(changeGoalHBox);
+                changeGoalHBox.setVisible(true);
+            }
+        });
+
+        trackWeightBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                borderPane.setBottom(currentWeightHBox);
+                currentWeightHBox.setVisible(true);
+            }
+        });
+
+        changeGoalSubmitBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (!changeGoalField.getText().equals("")) {
+                    String input = changeGoalField.getText();
+
+                    try {
+                        Float.parseFloat(input);
+
+                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyy   HH:mm");
+                        LocalDateTime currentDateTime = LocalDateTime.now();
+                        weightGoal = input;
+                        currentWeightGoalTxt.setText("Weight goal: " + weightGoal + " kg" + "  ||  " +
+                                "Set on:  " + dtf.format(currentDateTime));
+                    }
+                    catch (NumberFormatException ex) {
+                        System.out.println("test");
+                    }
+                }
+            }
+        });
+
+        trackWeightSubmitBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (!currentWeightField.getText().equals("")) {
+                    String input = currentWeightField.getText();
+
+                    try {
+                        Float.parseFloat(input);
+                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyy   HH:mm");
+                        LocalDateTime currentDateTime = LocalDateTime.now();
+                        currentWeight = input;
+                        weightTxt.setText("Current weight: " + currentWeight + " kg" + "  ||  " +
+                                "Set on:  " + dtf.format(currentDateTime));
+                    }
+                    catch (NumberFormatException ex) {
+                        System.out.println("test");
+                    }
+                }
+            }
+        });
+
+        closeBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                changeGoalHBox.setVisible(false);
+            }
+        });
+
+        closeBtn2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                currentWeightHBox.setVisible(false);
+            }
+        });
+
+        backBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    DatabaseHandler.StoreGoalData(currentWeightGoalTxt.getText(), weightTxt.getText(), userAccount);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         Scene scene = new Scene(borderPane);
         stage.setScene(scene);
         stage.show();
@@ -609,5 +874,10 @@ public class GUI {
         food.ConnectToAPI("tomato");
         System.out.println("name: " + food.getName());
         System.out.println("calories: " + food.getCalories());
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+
     }
 }

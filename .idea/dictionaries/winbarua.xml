@@ -2,16 +2,20 @@
   <dictionary name="winbarua">
     <words>
       <w>activitylevelindex</w>
+      <w>breakfastsb</w>
+      <w>dinnersb</w>
       <w>filereader</w>
       <w>firstname</w>
       <w>fname</w>
       <w>goalindex</w>
       <w>hasher</w>
       <w>hmac</w>
+      <w>lunchsb</w>
       <w>pbkdf</w>
       <w>prng</w>
       <w>radioboxes</w>
       <w>radiobtn</w>
+      <w>snacksb</w>
       <w>sname</w>
     </words>
   </dictionary>

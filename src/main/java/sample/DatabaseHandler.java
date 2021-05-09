@@ -14,9 +14,8 @@ import java.util.*;
 public class DatabaseHandler {
 
     // Initialise user database with headers
-    public static void InitDatabase() throws IOException {
-        String filePath = "users.csv";
-        CSVWriter writer = new CSVWriter(new FileWriter(filePath, false));
+    public static void InitDatabase(String path) throws IOException {
+        CSVWriter writer = new CSVWriter(new FileWriter(path, false));
 
         String[] heading = ("ID,first_name,last_name,email,age,height,weight,gender_index," +
                 "activity_level_index,weight_goal_index,bmi,daily_calories").split(",");
@@ -194,6 +193,84 @@ public class DatabaseHandler {
         return userAccount;
     }
 
+    public static void UpdateRecord(int userId, UserAccount userAccount) {
+        try {
+            // Create an object of filereader
+            // class with CSV file as a parameter.
+            FileReader filereader = new FileReader("users.csv");
+
+            // create csvReader object passing
+            // file reader as a parameter
+            CSVReader csvReader = new CSVReader(filereader);
+            String[] nextRecord;
+
+            String csv = "tmp.csv";
+            CSVWriter writer = new CSVWriter(new FileWriter(csv, true));
+
+            // we are going to read data line by line
+            while ((nextRecord = csvReader.readNext()) != null) {
+
+                if (nextRecord[0].equals(String.valueOf(userId))) {
+                    System.out.println(nextRecord[11]);
+                    String[] userRecord = userAccount.getUserInfo().split(",");
+                    writer.writeNext(userRecord);
+
+                } else {
+                    System.out.println("file exists");
+                    String[] userRecord = nextRecord;
+                    writer.writeNext(userRecord);
+                }
+            }
+
+            File file = new File("users.csv");
+            file.delete();
+            File file1 = new File(csv);
+            file1.renameTo(new File("users.csv"));
+            writer.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void StoreGoalData(String weightGoal, String currentWeight, UserAccount userAccount) throws IOException {
+        String csv = "goals.csv";
+
+        CSVWriter writer = new CSVWriter(new FileWriter(csv, true));
+        String[] record = (String.valueOf(userAccount.getUserId()) + "," + weightGoal + "," + currentWeight).split(",");
+        writer.writeNext(record);
+
+        writer.close();
+    }
+
+    public static void LoadGoalData(int id, String weightGoal, String currentWeight) throws IOException, CsvValidationException {
+        FileReader fileReader = new FileReader("goals.csv");
+        CSVReader CSVreader = new CSVReader(fileReader);
+        String[] nextRecord;
+
+        int i = 0;
+        while ((nextRecord = CSVreader.readNext()) != null) {
+            if (i == id) {
+                weightGoal = nextRecord[1];
+                currentWeight = nextRecord[2];
+            }
+            i += 1;
+        }
+    }
+
+    public static boolean CheckID(int id, String path) throws IOException, CsvValidationException {
+        FileReader fileReader = new FileReader(path);
+        CSVReader csvReader = new CSVReader(fileReader);
+
+        boolean returnValue = false;
+        String[] nextRecord;
+        while ((nextRecord = csvReader.readNext()) != null) {
+            if (Integer.parseInt(nextRecord[0]) == id) returnValue = true;
+        }
+
+        return returnValue;
+    }
+
     public static byte[] salt;
     public static void main(String[] args) throws Exception
     {
@@ -219,7 +296,14 @@ public class DatabaseHandler {
 //            System.out.println("Login Failed");
 //        }
 
-        UserAccount userAccount = DatabaseHandler.returnUserAccount(1);
-        System.out.println(userAccount.toString());
+        int dailyCals = 0;
+        UserAccount userAccount = returnUserAccount(0);
+        dailyCals = userAccount.getDailyCalories();
+        System.out.println(dailyCals);
+
+        dailyCals -= 500;
+        userAccount.setDailyCalories(dailyCals);
+
+        UpdateRecord(userAccount.getUserId(), userAccount);
     }
 }

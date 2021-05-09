@@ -20,6 +20,8 @@ public class Main extends Application{
         GUI gui = new GUI();
         gui.LoginPage(primaryStage);
 //        gui.MainScreen(primaryStage);
+//        gui.UserGroupPage(primaryStage);
+//        gui.GoalsPage(primaryStage);
     }
 
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
