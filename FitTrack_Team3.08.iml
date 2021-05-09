@@ -43,5 +43,7 @@
         <jarDirectory url="file://$MODULE_DIR$/libraries/java.net.http" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="lib1" level="project" />
   </component>
 </module>
