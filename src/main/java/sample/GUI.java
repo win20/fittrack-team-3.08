@@ -2,11 +2,8 @@ package sample;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.opencsv.exceptions.CsvException;
-<<<<<<< HEAD
 import com.opencsv.exceptions.CsvValidationException;
-=======
 import com.sun.javafx.menu.MenuItemBase;
->>>>>>> 5984b4a4bee8b51026d57e3e8c75441a24a33279
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
