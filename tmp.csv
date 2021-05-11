@@ -1,2 +1,7 @@
 "0","Weight goal: 60 kg  ||  Set on:  11/05/2021   16:02","Current weight: 59 kg  ||  Set on:  11/05/2021   16:03","Current weight: 55 kg  ||  Set on:  11/05/2021   16:02","Current weight: 53.1 kg  ||  Set on:  11/05/2021   16:02","Current weight: 52.3 kg  ||  Set on:  11/05/2021   16:02"
 "2","Weight goal: 70 kg  ||  Set on:  11/05/2021   16:03","Current weight: 62 kg  ||  Set on:  11/05/2021   16:03","Current weight: 59 kg  ||  Set on:  11/05/2021   16:03","Current weight: 57 kg  ||  Set on:  11/05/2021   16:03","Current weight: 55 kg  ||  Set on:  11/05/2021   16:03"
+"ID","first_name","last_name","email","age","height","weight","gender_index","activity_level_index","weight_goal_index","bmi","daily_calories"
+"0","Win","Barua","win.barua2@gmail.com","21","1.7","55.0","0","2","2","19.0","2651"
+"1","Test","second Name","testing@gmail.com","26","1.85","90.0","0","1","0","26.3","1610"
+"2","John","Smith","jsmith@gmail.com","19","1.6","45.0","0","3","1","17.6","2232"
+"3","Hi","Hello","hello@gmail.com","34","1.5","34.0","0","1","0","15.1","1045"

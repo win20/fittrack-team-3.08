@@ -1016,6 +1016,7 @@ public class GUI extends Application {
         stage.show();
     }
 
+    StringBuilder exerciceSb = new StringBuilder();
     void exercisePage(Stage stage){
 
         VBox vBox = new VBox();
@@ -1023,14 +1024,12 @@ public class GUI extends Application {
         //comboBox for time
         //back button
         //submit button
-        Accordion accordion = new Accordion();
-        TitledPane pane1 = new TitledPane("Morning", new Label("Show Morning Exercises"));
-        TitledPane pane2 = new TitledPane("Afternoon", new Label("Show Afternoon Exercises"));
-        TitledPane pane3 = new TitledPane("Evening", new Label("Show Evening Exercises"));
-        accordion.getPanes().add(pane1);
-        accordion.getPanes().add(pane2);
-        accordion.getPanes().add(pane3);
-        accordion.setMaxSize(600,800);
+
+        Text dailyExercises = new Text("Daily Exercises");
+        Text exerciseContent = new Text(exerciceSb.toString());
+
+
+        Button submitEx = new Button("Submit Exercise");
 
         ComboBox comboBox = new ComboBox();
         comboBox.getItems().add("Running");
@@ -1041,20 +1040,34 @@ public class GUI extends Application {
         comboBox.getItems().add("Yoga");
         comboBox.getItems().add("Other Exercise Type");
 
-        
+
         ComboBox comboBox1 = new ComboBox();
         comboBox1.getItems().add("15 min");
         comboBox1.getItems().add("30 min");
         comboBox1.getItems().add("45 min");
         comboBox1.getItems().add("1 h");
         comboBox1.getItems().add("more than 1 h");
-        vBox.getChildren().addAll(accordion,comboBox, comboBox1 ,backBtn);
+
         vBox.setAlignment(Pos.CENTER);
 
+        TextField caloriesInput = new TextField();
+        caloriesInput.setPromptText("Enter calories burnt");
+
+        vBox.getChildren().addAll(dailyExercises, exerciseContent,comboBox, comboBox1,caloriesInput ,backBtn, submitEx);
 
         Scene scene = new Scene(vBox);
         stage.setScene(scene);
         stage.show();
+
+        submitEx.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+                userAccount.setDailyCalories(userAccount.getDailyCalories() + Integer.parseInt(caloriesInput.getText()));
+                exerciceSb.append(comboBox.getSelectionModel().getSelectedItem() + " - " + comboBox1.getSelectionModel().getSelectedItem()+ " - " +caloriesInput.getText()+ "\n");
+                exerciseContent.setText(exerciceSb.toString());
+            }
+        });
 
         backBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
