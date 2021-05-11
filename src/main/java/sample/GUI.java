@@ -880,16 +880,12 @@ public class GUI extends Application {
 
     boolean visible = true;
 
-    void exercisePage(Stage stage){
-
-        //MY STUFF
-
+    void exercisePage(Stage stage) {
         HBox hBox = new HBox();
         Button backBtn = new Button("Back");
         backBtn.setPrefSize(100, 40);
 
-        //
-        //
+
 
         Text pageTitle=  new Text("Exercises");
         pageTitle.setStyle("-fx-font-size: 30;");
@@ -902,8 +898,6 @@ public class GUI extends Application {
         hBox.setPadding(new Insets(50, 25, 25, 25));
         hBox.setSpacing(50);
 
-        //END MY STUFF
-
         VBox vBox = new VBox();
         //Button backBtn = new Button("Back");
 
@@ -911,15 +905,22 @@ public class GUI extends Application {
         //back button
         //submit button
 
-        ComboBox comboBox = new ComboBox();
+        //add exercise stuff that goes invisible
+        VBox submitExercise = new VBox();
 
+        ComboBox comboBox = new ComboBox();
         comboBox.getItems().add("Running");
         comboBox.getItems().add("Swimming");
         comboBox.getItems().add("Walking");
-        ChoiceBox genderChoiceBox = new ChoiceBox();
-        genderChoiceBox.getItems().add("Male");
 
-        vBox.getChildren().addAll(hBox, comboBox);
+        Button submitBtn = new Button("Submit");
+        submitBtn.setPrefSize(100, 40);
+        submitExercise.getChildren().addAll(comboBox, submitBtn);
+        submitExercise.setSpacing(10);
+        submitExercise.
+
+        vBox.getChildren().addAll(hBox, submitExercise);
+        vBox.setSpacing(20);
 
         Scene scene = new Scene(vBox);
         stage.setScene(scene);
@@ -941,11 +942,11 @@ public class GUI extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 if (visible) {
-                    comboBox.setVisible(false);
+                    submitExercise.setVisible(false);
                     visible = false;
                 }
                 else {
-                    comboBox.setVisible(true);
+                    submitExercise.setVisible(true);
                     visible = true;
                 }
             }
