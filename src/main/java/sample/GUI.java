@@ -46,7 +46,6 @@ public class GUI extends Application {
         return user_id;
     }
 
-
     final String mealMsg = "You will see the food you have added here...";
     StringBuilder breakfastsb = new StringBuilder(mealMsg);
     StringBuilder lunchsb = new StringBuilder(mealMsg);
