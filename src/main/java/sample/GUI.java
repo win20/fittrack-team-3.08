@@ -1023,18 +1023,34 @@ public class GUI extends Application {
         //comboBox for time
         //back button
         //submit button
+        Accordion accordion = new Accordion();
+        TitledPane pane1 = new TitledPane("Morning", new Label("Show Morning Exercises"));
+        TitledPane pane2 = new TitledPane("Afternoon", new Label("Show Afternoon Exercises"));
+        TitledPane pane3 = new TitledPane("Evening", new Label("Show Evening Exercises"));
+        accordion.getPanes().add(pane1);
+        accordion.getPanes().add(pane2);
+        accordion.getPanes().add(pane3);
+        accordion.setMaxSize(600,800);
 
         ComboBox comboBox = new ComboBox();
+        comboBox.getItems().add("Running");
+        comboBox.getItems().add("Swimming");
+        comboBox.getItems().add("Walking");
+        comboBox.getItems().add("Light Exercise");
+        comboBox.getItems().add("Cardio");
+        comboBox.getItems().add("Yoga");
+        comboBox.getItems().add("Other Exercise Type");
 
-        comboBox.getItems().add("running");
-        comboBox.getItems().add("swimming");
-        comboBox.getItems().add("walking");
-        ChoiceBox genderChoiceBox = new ChoiceBox();
-        genderChoiceBox.getItems().add("Male");
+        
+        ComboBox comboBox1 = new ComboBox();
+        comboBox1.getItems().add("15 min");
+        comboBox1.getItems().add("30 min");
+        comboBox1.getItems().add("45 min");
+        comboBox1.getItems().add("1 h");
+        comboBox1.getItems().add("more than 1 h");
+        vBox.getChildren().addAll(accordion,comboBox, comboBox1 ,backBtn);
+        vBox.setAlignment(Pos.CENTER);
 
-        Text text = new Text("Hello");
-
-        vBox.getChildren().addAll(comboBox, text, backBtn);
 
         Scene scene = new Scene(vBox);
         stage.setScene(scene);
@@ -1050,9 +1066,7 @@ public class GUI extends Application {
                 }
             }
         });
-
     }
-
 
     public static void main(String[] args) throws UnirestException {
         Food food = new Food();
