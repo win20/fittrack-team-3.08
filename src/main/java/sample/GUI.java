@@ -2,11 +2,8 @@ package sample;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.opencsv.exceptions.CsvException;
-<<<<<<< HEAD
 import com.opencsv.exceptions.CsvValidationException;
-=======
 import com.sun.javafx.menu.MenuItemBase;
->>>>>>> 5984b4a4bee8b51026d57e3e8c75441a24a33279
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -76,6 +73,7 @@ public class GUI extends Application {
         parent.getChildren().add(title);
         VBox.setMargin(title, new Insets(50,0,0 ,0));
         title.setFont(Font.font(fontName, FontWeight.BOLD, 40));
+        title.setFill(Color.web("#4a4a4a"));
 
         // email
         Label emailLabel = new Label("Email");
@@ -98,7 +96,7 @@ public class GUI extends Application {
         Button loginBtn = new Button("Sign in");
         parent.getChildren().add(loginBtn);
         loginBtn.setFont(Font.font(fontName, FontWeight.NORMAL, 18));
-        loginBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed");
+        loginBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed; -fx-cursor:hand;");
         loginBtn.setMaxWidth(100);
 
         // button to send the user to registration form
@@ -106,14 +104,14 @@ public class GUI extends Application {
         parent.getChildren().add(registerBtn);
         VBox.setMargin(registerBtn, new Insets(50,0,0,0));
         registerBtn.setFont(Font.font(fontName, FontWeight.NORMAL, 18));
-        registerBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed");
+        registerBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed; -fx-cursor:hand;");
         registerBtn.setMaxWidth(140);
 
         // exit button, closes the application
         Button exitBtn = new Button("Exit");
         parent.getChildren().add(exitBtn);
         exitBtn.setFont(Font.font(fontName, FontWeight.NORMAL, 18));
-        exitBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed");
+        exitBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed; -fx-cursor:hand;");
         exitBtn.setMaxWidth(140);
 
         loginBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -128,7 +126,9 @@ public class GUI extends Application {
                         alert.setContentText("Login Successful");
 
                         int id = DatabaseHandler.returnUserId(emailField.getText());
+                        user_id = id;
                         userAccount = DatabaseHandler.returnUserAccount(id);
+                        System.out.println("TEST: " + userAccount.toString());
                         MainScreen(stage);
                     } else {
                         alert.setContentText("Login Failed");
@@ -275,13 +275,13 @@ public class GUI extends Application {
         Button backBtn = new Button("Back");
         grid.add(backBtn, 0,13);
         backBtn.setFont(Font.font(fontName, FontWeight.NORMAL, 18));
-        backBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed");
+        backBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed; -fx-cursor: hand;");
 
         // register button
         Button registerBtn = new Button("Register");
         grid.add(registerBtn, 1,13);
         registerBtn.setFont(Font.font(fontName, FontWeight.NORMAL, 18));
-        registerBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed");
+        registerBtn.setStyle("-fx-background-color: #737373; -fx-text-fill: #ededed; -fx-cursor: hand;");
 
         // send user back to first page if backBtn is pressed
         backBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -439,21 +439,21 @@ public class GUI extends Application {
     }
     /* ============ END OF VALIDATION METHODS =============== */
 
-    void MainScreen(Stage stage) throws FileNotFoundException {
+    void MainScreen(Stage stage) throws IOException, CsvValidationException {
         HBox topMenu = new HBox();
 
         Button profileBtn = new Button("My\nProfile");
-        profileBtn.setStyle("-fx-font-size: 18");
-        profileBtn.setPrefSize(80,80);
+        profileBtn.setStyle("-fx-font-size: 18; -fx-cursor: hand; -fx-background-color: #737373; -fx-text-fill: #ededed;");
+        profileBtn.setPrefSize(90,80);
 
         userCaloriesRemaining = userAccount.getDailyCalories();
         Text caloriesTxt = new Text("Calories remaining: " + userCaloriesRemaining);
-        caloriesTxt.setStyle("-fx-font-size: 25");
+        caloriesTxt.setStyle("-fx-font-size: 25;");
         caloriesTxt.setFill(Color.web("#8a8a8a"));
 
         Button logoutBtn = new Button("Logout");
-        logoutBtn.setStyle("-fx-font-size: 18");
-        logoutBtn.setPrefSize(80,80);
+        logoutBtn.setStyle("-fx-font-size: 18; -fx-cursor: hand; -fx-background-color: #737373; -fx-text-fill: #ededed;");
+        logoutBtn.setPrefSize(90,80);
         topMenu.getChildren().addAll(profileBtn, caloriesTxt, logoutBtn);
         topMenu.setAlignment(Pos.CENTER);
         topMenu.setSpacing(140);
@@ -463,17 +463,35 @@ public class GUI extends Application {
         leftMenu.setSpacing(20);
 
         Button addFoodBtn = new Button("Add food");
-        addFoodBtn.setPrefSize(100, 30);
+        addFoodBtn.setPrefSize(110, 30);
+        addFoodBtn.setStyle("-fx-cursor: hand; -fx-background-color: #737373; -fx-text-fill: #ededed; -fx-font-size: 16;");
 
         Button addExerciseBtn = new Button("Add exercise");
-        addExerciseBtn.setPrefSize(100, 30);
+        addExerciseBtn.setPrefSize(110, 30);
+        addExerciseBtn.setStyle("-fx-cursor: hand; -fx-background-color: #737373; -fx-text-fill: #ededed; -fx-font-size: 16;");
 
         Button addGoalBtn = new Button("Add goal");
-        addGoalBtn.setPrefSize(100, 30);
+        addGoalBtn.setPrefSize(110, 30);
+        addGoalBtn.setStyle("-fx-cursor: hand; -fx-background-color: #737373; -fx-text-fill: #ededed; -fx-font-size: 16;");
 
         Button groupBtn = new Button("Groups");
-        groupBtn.setPrefSize(100, 30);
+        groupBtn.setPrefSize(110, 30);
+        groupBtn.setStyle("-fx-cursor: hand; -fx-background-color: #737373; -fx-text-fill: #ededed; -fx-font-size: 16;");
         leftMenu.getChildren().addAll(addFoodBtn, addExerciseBtn, addGoalBtn, groupBtn);
+
+        System.out.println("Test: " + user_id);
+
+        if (DatabaseHandler.CheckID(user_id, "food.csv")) {
+            breakfastsb = new StringBuilder(DatabaseHandler.LoadFoodData(user_id, 0));
+            lunchsb = new StringBuilder(DatabaseHandler.LoadFoodData(user_id, 1));
+            dinnersb = new StringBuilder(DatabaseHandler.LoadFoodData(user_id, 2));
+            snacksb = new StringBuilder(DatabaseHandler.LoadFoodData(user_id, 3));
+        } else {
+            breakfastsb = new StringBuilder(mealMsg);
+            lunchsb = new StringBuilder(mealMsg);
+            dinnersb = new StringBuilder(mealMsg);
+            snacksb = new StringBuilder(mealMsg);
+        }
 
         Accordion accordion = new Accordion();
         Text breakfastTxt =  new Text(breakfastsb.toString());
@@ -510,6 +528,7 @@ public class GUI extends Application {
         TextField searchFoodField = new TextField();
         searchFoodField.setPromptText("Enter food..");
         Button searchFoodBtn = new Button("Search");
+        searchFoodBtn.setStyle("-fx-cursor: hand;");
         ComboBox mealChoice = new ComboBox();
         mealChoice.getItems().addAll("Breakfast", "Lunch", "Dinner", "Snack");
         mealChoice.getSelectionModel().selectFirst();
@@ -523,6 +542,7 @@ public class GUI extends Application {
         foodCloseIconIV.setFitWidth(20);
         Button closeBtn = new Button("", foodCloseIconIV);
         closeBtn.setBackground(Background.EMPTY);
+        closeBtn.setStyle("-fx-cursor: hand;");
         Text addFoodTxt = new Text("");
 
         HBox addFoodHbox = new HBox();
@@ -536,6 +556,7 @@ public class GUI extends Application {
         borderPane.setLeft(leftMenu);
         borderPane.setCenter(vBox);
         borderPane.setBottom(addFoodHbox);
+        borderPane.setStyle("-fx-background-color: #ededed");
 
         addFoodBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -576,25 +597,25 @@ public class GUI extends Application {
                         DatabaseHandler.UpdateRecord(userAccount.getUserId(), userAccount);
 
                         if (mealChoiceIndex == 0) {
-                            breakfastsb = new StringBuilder();
+                            if(breakfastsb.toString().equals(mealMsg)) breakfastsb = new StringBuilder();
                             breakfastsb.append(food.getName() + " - " + food.getCalories() + " cal/100g" + "; serving(g): " +
                                     servingSizeField.getText() + "; total calories: " + totalCalEaten);
                             breakfastsb.append("\n");
                             breakfastTxt.setText(breakfastsb.toString());
                         } else if (mealChoiceIndex == 1) {
-                            lunchsb = new StringBuilder();
+                            if(lunchsb.toString().equals(mealMsg)) lunchsb = new StringBuilder();
                             lunchsb.append(food.getName() + " - " + food.getCalories() + " cal/100g" + "; serving(g): " +
                                     servingSizeField.getText() + "; total calories: " + totalCalEaten);
                             lunchsb.append("\n");
                             lunchTxt.setText(lunchsb.toString());
                         } else if (mealChoiceIndex == 2) {
-                            dinnersb = new StringBuilder();
+                            if(dinnersb.toString().equals(mealMsg)) dinnersb = new StringBuilder();
                             dinnersb.append(food.getName() + " - " + food.getCalories() + " cal/100g" + "; serving(g): " +
                                     servingSizeField.getText() + "; total calories: " + totalCalEaten);
                             dinnersb.append("\n");
                             dinnerTxt.setText(dinnersb.toString());
                         } else if (mealChoiceIndex == 3) {
-                            snacksb = new StringBuilder();
+                            if(snacksb.toString().equals(mealMsg)) snacksb = new StringBuilder();
                             snacksb.append(food.getName() + " - " + food.getCalories() + " cal/100g" + "; serving(g): " +
                                     servingSizeField.getText() + "; total calories: " + totalCalEaten);
                             snacksb.append("\n");
@@ -602,17 +623,20 @@ public class GUI extends Application {
                         }
                         addFoodTxt.setFill(Color.GREEN);
                         addFoodTxt.setText("Food added!");
-
                     } else {
                         addFoodTxt.setFill(Color.RED);
                         addFoodTxt.setText("Food not found..");
                     }
                 }
             }
-
-
         });
 
+        profileBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                ProfilePage(stage);
+            }
+        });
 
         addExerciseBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -624,6 +648,11 @@ public class GUI extends Application {
         logoutBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                try {
+                    DatabaseHandler.StoreFoodData(user_id, breakfastsb.toString(), lunchsb.toString(), dinnersb.toString(), snacksb.toString());
+                } catch (IOException | CsvValidationException e) {
+                    e.printStackTrace();
+                }
                 LoginPage(stage);
             }
         });
@@ -690,7 +719,7 @@ public class GUI extends Application {
             public void handle(ActionEvent actionEvent) {
                 try {
                     MainScreen(stage);
-                } catch (FileNotFoundException e) {
+                } catch (IOException | CsvValidationException e) {
                     e.printStackTrace();
                 }
             }
@@ -703,6 +732,9 @@ public class GUI extends Application {
 
     String weightGoal = "Weight goal: You haven't added a goal yet...";
     String currentWeight = "Current weight: Please register your current weight...";
+    String prevWeight1 = "...";
+    String prevWeight2 = "...";
+    String prevWeight3 = "...";
     void GoalsPage(Stage stage) throws IOException, CsvValidationException {
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
@@ -724,11 +756,19 @@ public class GUI extends Application {
 
         VBox vBox1 = new VBox();
 
-        if (DatabaseHandler.CheckID(userAccount.getUserId(), "goals.csv")) {
+        if (DatabaseHandler.CheckID(user_id, "goals.csv")) {
             System.out.println("exists");
-            DatabaseHandler.LoadGoalData(userAccount.getUserId(), weightGoal, currentWeight);
+            weightGoal = DatabaseHandler.LoadGoalData(user_id, 0);
+            currentWeight = DatabaseHandler.LoadGoalData(user_id, 1);
+            prevWeight1 = DatabaseHandler.LoadGoalData(user_id, 2);
+            prevWeight2 = DatabaseHandler.LoadGoalData(user_id, 3);
+            prevWeight3 = DatabaseHandler.LoadGoalData(user_id, 4);
         } else {
-            System.out.println("Doesn't exist");
+            weightGoal = "Weight goal: You haven't added a goal yet...";
+            currentWeight = "Current weight: Please register your current weight...";
+            prevWeight1 = "...";
+            prevWeight2 = "...";
+            prevWeight3 = "...";
         }
 
         Text currentWeightGoalTxt = new Text(weightGoal);
@@ -738,7 +778,20 @@ public class GUI extends Application {
         weightTxt.setFill(Color.web("#7a7a7a"));
         weightTxt.setStyle("-fx-font-size: 20;");
 
-        vBox1.getChildren().addAll(currentWeightGoalTxt, weightTxt);
+        Text prevWeightInfo = new Text("\n\nLast 3 weights entered: ");
+        prevWeightInfo.setFill(Color.web("#7a7a7a"));
+        prevWeightInfo.setStyle("-fx-font-size: 20;");
+        Text prevWeightTxt1 = new Text(prevWeight1);
+        prevWeightTxt1.setFill(Color.web("#7a7a7a"));
+        prevWeightTxt1.setStyle("-fx-font-size: 20;");
+        Text prevWeightTxt2 = new Text(prevWeight2);
+        prevWeightTxt2.setFill(Color.web("#7a7a7a"));
+        prevWeightTxt2.setStyle("-fx-font-size: 20;");
+        Text prevWeightTxt3 = new Text(prevWeight3);
+        prevWeightTxt3.setFill(Color.web("#7a7a7a"));
+        prevWeightTxt3.setStyle("-fx-font-size: 20;");
+
+        vBox1.getChildren().addAll(currentWeightGoalTxt, weightTxt, prevWeightInfo, prevWeightTxt1, prevWeightTxt2, prevWeightTxt3);
         vBox1.setStyle("-fx-background-color: #e0e0e0;");
         vBox1.setMinSize(200, 350);
         vBox1.setPadding(new Insets(20));
@@ -791,6 +844,7 @@ public class GUI extends Application {
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(vBox);
         borderPane.setBottom(currentWeightHBox);
+        borderPane.setStyle("-fx-background-color: #ededed");
 
         changeGoalBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -838,9 +892,20 @@ public class GUI extends Application {
 
                     try {
                         Float.parseFloat(input);
+
+                        System.out.println(currentWeight);
+
+                        if (!weightTxt.getText().equals("Current weight: Please register your current weight...")) {
+
+                            prevWeightTxt3.setText(prevWeightTxt2.getText());
+                            prevWeightTxt2.setText(prevWeightTxt1.getText());
+                            prevWeightTxt1.setText(weightTxt.getText());
+                        }
+
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyy   HH:mm");
                         LocalDateTime currentDateTime = LocalDateTime.now();
                         currentWeight = input;
+
                         weightTxt.setText("Current weight: " + currentWeight + " kg" + "  ||  " +
                                 "Set on:  " + dtf.format(currentDateTime));
                     }
@@ -858,6 +923,13 @@ public class GUI extends Application {
             }
         });
 
+        closeBtn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                closeBtn.setStyle("-fx-cursor: hand;");
+            }
+        });
+
         closeBtn2.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -865,12 +937,76 @@ public class GUI extends Application {
             }
         });
 
+        closeBtn2.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                closeBtn2.setStyle("-fx-cursor: hand;");
+            }
+        });
+
         backBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
-                    DatabaseHandler.StoreGoalData(currentWeightGoalTxt.getText(), weightTxt.getText(), userAccount);
-                } catch (IOException e) {
+                    DatabaseHandler.StoreGoalData(currentWeightGoalTxt.getText(), weightTxt.getText(), userAccount,
+                            prevWeightTxt1.getText(), prevWeightTxt2.getText(), prevWeightTxt3.getText());
+                    MainScreen(stage);
+                } catch (IOException | CsvValidationException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Scene scene = new Scene(borderPane);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    void ProfilePage(Stage stage) {
+        VBox titleHbox = new VBox();
+        Text pageTitle = new Text(userAccount.getFname() + " " + userAccount.getSname());
+        pageTitle.setStyle("-fx-font-size:30;-fx-fill:#474747;");
+        titleHbox.getChildren().add(pageTitle);
+        titleHbox.setAlignment(Pos.BASELINE_CENTER);
+        titleHbox.setPadding(new Insets(30,0,0,0));
+
+        VBox contentVbox = new VBox();
+
+        String contentString = "Email: " + userAccount.getEmail() + "\n" +
+                "Age: " + userAccount.getAge() + "\n" +
+                "Height: " + userAccount.getHeight() + " m" + "\n" +
+                "Weight: " + userAccount.getWeight() + " kg" + "\n" +
+                "Gender: " + userAccount.GetGenderString(Integer.parseInt(userAccount.getGender())) + "\n" +
+                "Activity Level: " + userAccount.GetActivityLevelString(userAccount.getActivityLevelIndex()) + "\n" +
+                "Body mass index (BMI): " + userAccount.getBmi() + "\n" +
+                "Daily calories: " + userAccount.getDailyCalories();
+
+        Text content = new Text(contentString);
+        content.setStyle("-fx-font-size: 18; -fx-fill: #6e6e6e");
+        content.setLineSpacing(10);
+
+        contentVbox.getChildren().addAll(content);
+        contentVbox.setAlignment(Pos.TOP_CENTER);
+        contentVbox.setPadding(new Insets(130,0,0,0));
+
+        Button backBtn = new Button("Back");
+        backBtn.setPrefSize(100, 40);
+        backBtn.setStyle("-fx-cursor: hand;");
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setTop(titleHbox);
+        borderPane.setCenter(contentVbox);
+        borderPane.setBottom(backBtn);
+        BorderPane.setAlignment(backBtn, Pos.CENTER);
+        BorderPane.setMargin(backBtn, new Insets(0,0,100,0));
+        borderPane.setStyle("-fx-background-color: #ededed");
+
+        backBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    MainScreen(stage);
+                } catch (IOException | CsvValidationException e) {
                     e.printStackTrace();
                 }
             }
@@ -910,7 +1046,7 @@ public class GUI extends Application {
             public void handle(ActionEvent actionEvent) {
                 try {
                     MainScreen(stage);
-                } catch (FileNotFoundException e) {
+                } catch (IOException | CsvValidationException e) {
                     e.printStackTrace();
                 }
             }

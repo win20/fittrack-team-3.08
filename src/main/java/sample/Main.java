@@ -6,22 +6,17 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends Application{
 
     public void start(Stage primaryStage) throws Exception{
         primaryStage.setTitle("FitTrack");
-        primaryStage.setWidth(800);
-        primaryStage.setHeight(700);
-        primaryStage.setMinWidth(800);
-        primaryStage.setMinHeight(700);
-
+        primaryStage.setWidth(900);
+        primaryStage.setHeight(800);
+        primaryStage.setMinWidth(900);
+        primaryStage.setMinHeight(800);
         GUI gui = new GUI();
         gui.LoginPage(primaryStage);
-//        gui.MainScreen(primaryStage);
-//        gui.UserGroupPage(primaryStage);
-//        gui.GoalsPage(primaryStage);
     }
 
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException {

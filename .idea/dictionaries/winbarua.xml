@@ -10,7 +10,9 @@
       <w>goalindex</w>
       <w>hasher</w>
       <w>hmac</w>
+      <w>imgs</w>
       <w>lunchsb</w>
+      <w>mult</w>
       <w>pbkdf</w>
       <w>prng</w>
       <w>radioboxes</w>

@@ -95,9 +95,7 @@ public class UserAccount {
     public WeightGoal getWeightGoal() {
         return weightGoal;
     }
-    public ActivityLevel getActivityLevel() {
-        return activityLevel;
-    }
+    public ActivityLevel getActivityLevel() { return activityLevel; }
 
     // Modifier methods
     public void setUserId(int userId) { this.userId = userId; }
@@ -238,6 +236,42 @@ public class UserAccount {
                 gender = "Female";
                 break;
         }
+    }
+
+    public String GetGenderString(int idx) {
+        String returnValue = "";
+        switch (idx) {
+            case 0:
+                returnValue = "Male";
+                break;
+            case 1:
+                returnValue = "Female";
+                break;
+        }
+        return returnValue;
+    }
+
+    public String GetActivityLevelString(int activityLevelIndex) {
+        String returnValue = "";
+
+        switch (activityLevelIndex) {
+            case 0:
+                returnValue = "Sedentary";
+                break;
+            case 1:
+                returnValue = "Light exercise";
+                break;
+            case 2:
+                returnValue = "Moderate exercise";
+                break;
+            case 3:
+                returnValue = "Heavy exercise";
+                break;
+            case 4:
+                returnValue = "Athlete";
+                break;
+        }
+        return returnValue;
     }
 
     public void SetActivityLevel(int idx) {

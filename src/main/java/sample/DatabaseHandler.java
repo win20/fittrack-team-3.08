@@ -211,12 +211,10 @@ public class DatabaseHandler {
             while ((nextRecord = csvReader.readNext()) != null) {
 
                 if (nextRecord[0].equals(String.valueOf(userId))) {
-                    System.out.println(nextRecord[11]);
                     String[] userRecord = userAccount.getUserInfo().split(",");
                     writer.writeNext(userRecord);
 
                 } else {
-                    System.out.println("file exists");
                     String[] userRecord = nextRecord;
                     writer.writeNext(userRecord);
                 }
@@ -233,32 +231,135 @@ public class DatabaseHandler {
         }
     }
 
-    public static void StoreGoalData(String weightGoal, String currentWeight, UserAccount userAccount) throws IOException {
-        String csv = "goals.csv";
+    public static void StoreGoalData(String weightGoal, String currentWeight, UserAccount userAccount, String prevWeight1,
+                                     String prevWeight2, String prevWeight3) throws IOException, CsvValidationException {
+        int userId = userAccount.getUserId();
 
-        CSVWriter writer = new CSVWriter(new FileWriter(csv, true));
-        String[] record = (String.valueOf(userAccount.getUserId()) + "," + weightGoal + "," + currentWeight).split(",");
-        writer.writeNext(record);
+        String csvPath = "goals.csv";
 
-        writer.close();
+        CSVWriter appendWriter = new CSVWriter(new FileWriter(csvPath, true));
+
+        if (!(new File(csvPath).exists())) {
+            String[] record = (String.valueOf(userAccount.getUserId()) + "," + weightGoal + "," + currentWeight +
+                    "," + prevWeight1 + "," + prevWeight2 + "," +prevWeight3).split(",");
+            appendWriter.writeNext(record);
+            appendWriter.close();
+        }
+
+        FileReader fileReader = new FileReader(csvPath);
+
+        CSVReader csvReader = new CSVReader(fileReader);
+        String[] nextRecord;
+
+        String csvTmp = "tmp.csv";
+        CSVWriter updateWriter = new CSVWriter(new FileWriter(csvTmp, true));
+
+        if (CheckID(userId, csvPath)) {
+            while ((nextRecord = csvReader.readNext()) != null) {
+                if (nextRecord[0].equals(String.valueOf(userId))) {
+                    String[] record = (String.valueOf(userAccount.getUserId()) + "," + weightGoal + "," + currentWeight +
+                            "," + prevWeight1 + "," + prevWeight2 + "," +prevWeight3).split(",");
+                    updateWriter.writeNext(record);
+                } else {
+                    String[] record = nextRecord;
+                    updateWriter.writeNext(record);
+                }
+            }
+
+            File fileToDelete = new File(csvPath);
+            fileToDelete.delete();
+
+            File fileToRename = new File(csvTmp);
+            fileToRename.renameTo(new File(csvPath));
+
+            updateWriter.close();
+        }
+        else {
+            String[] record = (String.valueOf(userAccount.getUserId()) + "," + weightGoal + "," + currentWeight +
+                    "," + prevWeight1 + "," + prevWeight2 + "," +prevWeight3).split(",");
+            appendWriter.writeNext(record);
+            appendWriter.close();
+        }
     }
 
-    public static void LoadGoalData(int id, String weightGoal, String currentWeight) throws IOException, CsvValidationException {
+    public static String LoadGoalData(int id, int returnChoice) throws IOException, CsvValidationException {
         FileReader fileReader = new FileReader("goals.csv");
         CSVReader CSVreader = new CSVReader(fileReader);
         String[] nextRecord;
 
-        int i = 0;
+        String returnValue = "";
         while ((nextRecord = CSVreader.readNext()) != null) {
-            if (i == id) {
-                weightGoal = nextRecord[1];
-                currentWeight = nextRecord[2];
+            if (Integer.parseInt(nextRecord[0]) == id) {
+                returnValue = nextRecord[returnChoice + 1];
             }
-            i += 1;
+        }
+
+        return returnValue;
+    }
+
+    public static void StoreFoodData(int userId, String breakfast, String lunch, String dinner, String snack) throws IOException, CsvValidationException {
+        String path = "food.csv";
+        CSVWriter appendWriter = new CSVWriter(new FileWriter(path, true));
+
+        if (!(new File(path).exists())) {
+            String[] record = (userId + "," + breakfast + "," + lunch + "," + dinner + "," + snack).split(",");
+            appendWriter.writeNext(record);
+            appendWriter.close();
+        }
+
+        FileReader fileReader = new FileReader(path);
+
+        CSVReader csvReader = new CSVReader(fileReader);
+        String[] nextRecord;
+
+        String csvTmp = "tmp.csv";
+        CSVWriter updateWriter = new CSVWriter(new FileWriter(csvTmp, true));
+
+        if (CheckID(userId, path)) {
+            while ((nextRecord = csvReader.readNext()) != null) {
+                if (nextRecord[0].equals(String.valueOf(userId))) {
+                    String[] record = (userId + "," + breakfast + "," + lunch + "," + dinner + "," + snack).split(",");
+                    updateWriter.writeNext(record);
+                } else {
+                    String[] record = nextRecord;
+                    updateWriter.writeNext(record);
+                }
+            }
+
+            File fileToDelete = new File(path);
+            fileToDelete.delete();
+
+            File fileToRename = new File(csvTmp);
+            fileToRename.renameTo(new File(path));
+
+            updateWriter.close();
+        }
+        else {
+            String[] record = (userId + "," + breakfast + "," + lunch + "," + dinner + "," + snack).split(",");
+            appendWriter.writeNext(record);
+            appendWriter.close();
         }
     }
 
+    public static String LoadFoodData(int id, int returnChoice) throws IOException, CsvValidationException {
+        FileReader fileReader = new FileReader("food.csv");
+        CSVReader CSVreader = new CSVReader(fileReader);
+        String[] nextRecord;
+
+        String returnValue = "";
+        while ((nextRecord = CSVreader.readNext()) != null) {
+            if (Integer.parseInt(nextRecord[0]) == id) {
+                returnValue = nextRecord[returnChoice + 1];
+            }
+        }
+
+        return returnValue;
+    }
+
     public static boolean CheckID(int id, String path) throws IOException, CsvValidationException {
+
+        if (!new File(path).exists()) return false;
+
         FileReader fileReader = new FileReader(path);
         CSVReader csvReader = new CSVReader(fileReader);
 
@@ -274,36 +375,6 @@ public class DatabaseHandler {
     public static byte[] salt;
     public static void main(String[] args) throws Exception
     {
-//        Scanner in = new Scanner(System.in);
-//        System.out.println("Enter email");
-//        String email = in.next();
-//
-//        int id = returnUserId(email);
-//        System.out.println("ID: " + id);
-//
-//        String[] str = readPasswordAndHash(returnUserId(email));
-//        String password = str[1];
-//        String saltHex = str[2];
-//
-//        salt = PasswordHasher.hexToByteArray(saltHex);
-//
-//        System.out.println("Enter password");
-//        String passInput = in.next();
-//
-//        if (id != -1 && PasswordHasher.checkPassword(password, passInput, salt)) {
-//            System.out.println("Login Successful");
-//        } else {
-//            System.out.println("Login Failed");
-//        }
 
-        int dailyCals = 0;
-        UserAccount userAccount = returnUserAccount(0);
-        dailyCals = userAccount.getDailyCalories();
-        System.out.println(dailyCals);
-
-        dailyCals -= 500;
-        userAccount.setDailyCalories(dailyCals);
-
-        UpdateRecord(userAccount.getUserId(), userAccount);
     }
 }
