@@ -879,7 +879,6 @@ public class GUI extends Application {
     }
 
     boolean visible = true;
-    Text test = new Text();
 
     void exercisePage(Stage stage){
 
@@ -888,12 +887,17 @@ public class GUI extends Application {
         HBox hBox = new HBox();
         Button backBtn = new Button("Back");
         backBtn.setPrefSize(100, 40);
-        Button changeGoalBtn = new Button("Change goal");
-        changeGoalBtn.setPrefSize(100, 40);
+
+        //
+        //
+
+        Text pageTitle=  new Text("Exercises");
+        pageTitle.setStyle("-fx-font-size: 30;");
+        //
         Button addExerBtn = new Button("Add exercise");
         addExerBtn.setPrefSize(100, 40);
 
-        hBox.getChildren().addAll(backBtn, changeGoalBtn, addExerBtn);
+        hBox.getChildren().addAll(backBtn, pageTitle, addExerBtn);
         hBox.setAlignment(Pos.CENTER);
         hBox.setPadding(new Insets(50, 25, 25, 25));
         hBox.setSpacing(50);
@@ -907,8 +911,6 @@ public class GUI extends Application {
         //back button
         //submit button
 
-        Text exerciseOptions = new Text("test");
-
         ComboBox comboBox = new ComboBox();
 
         comboBox.getItems().add("Running");
@@ -919,7 +921,7 @@ public class GUI extends Application {
 
         Text text = new Text("Hello");
 
-        vBox.getChildren().addAll(hBox, comboBox, text, exerciseOptions);
+        vBox.getChildren().addAll(hBox, comboBox, text);
 
         Scene scene = new Scene(vBox);
         stage.setScene(scene);
@@ -940,13 +942,12 @@ public class GUI extends Application {
         addExerBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                test = visible;
                 if (visible) {
-                    exerciseOptions.setVisible(false);
+                    comboBox.setVisible(false);
                     visible = false;
                 }
                 else {
-                    exerciseOptions.setVisible(true);
+                    comboBox.setVisible(true);
                     visible = true;
                 }
             }
