@@ -919,9 +919,7 @@ public class GUI extends Application {
         ChoiceBox genderChoiceBox = new ChoiceBox();
         genderChoiceBox.getItems().add("Male");
 
-        Text text = new Text("Hello");
-
-        vBox.getChildren().addAll(hBox, comboBox, text);
+        vBox.getChildren().addAll(hBox, comboBox);
 
         Scene scene = new Scene(vBox);
         stage.setScene(scene);
