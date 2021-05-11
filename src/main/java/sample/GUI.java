@@ -878,29 +878,53 @@ public class GUI extends Application {
         stage.show();
     }
 
+    boolean visible = true;
+    Text test = new Text();
+
     void exercisePage(Stage stage){
 
-        VBox vBox = new VBox();
+        //MY STUFF
+
+        HBox hBox = new HBox();
         Button backBtn = new Button("Back");
+        backBtn.setPrefSize(100, 40);
+        Button changeGoalBtn = new Button("Change goal");
+        changeGoalBtn.setPrefSize(100, 40);
+        Button addExerBtn = new Button("Add exercise");
+        addExerBtn.setPrefSize(100, 40);
+
+        hBox.getChildren().addAll(backBtn, changeGoalBtn, addExerBtn);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setPadding(new Insets(50, 25, 25, 25));
+        hBox.setSpacing(50);
+
+        //END MY STUFF
+
+        VBox vBox = new VBox();
+        //Button backBtn = new Button("Back");
+
         //comboBox for time
         //back button
         //submit button
 
+        Text exerciseOptions = new Text("test");
+
         ComboBox comboBox = new ComboBox();
 
-        comboBox.getItems().add("running");
-        comboBox.getItems().add("swimming");
-        comboBox.getItems().add("walking");
+        comboBox.getItems().add("Running");
+        comboBox.getItems().add("Swimming");
+        comboBox.getItems().add("Walking");
         ChoiceBox genderChoiceBox = new ChoiceBox();
         genderChoiceBox.getItems().add("Male");
 
         Text text = new Text("Hello");
 
-        vBox.getChildren().addAll(comboBox, text, backBtn);
+        vBox.getChildren().addAll(hBox, comboBox, text, exerciseOptions);
 
         Scene scene = new Scene(vBox);
         stage.setScene(scene);
         stage.show();
+
 
         backBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -913,8 +937,21 @@ public class GUI extends Application {
             }
         });
 
+        addExerBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                test = visible;
+                if (visible) {
+                    exerciseOptions.setVisible(false);
+                    visible = false;
+                }
+                else {
+                    exerciseOptions.setVisible(true);
+                    visible = true;
+                }
+            }
+        });
     }
-
 
     public static void main(String[] args) throws UnirestException {
         Food food = new Food();
