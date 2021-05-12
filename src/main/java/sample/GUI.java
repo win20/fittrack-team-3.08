@@ -1033,15 +1033,12 @@ public class GUI extends Application {
         stage.show();
     }
 
-    StringBuilder exerciceSb = new StringBuilder();
+    StringBuilder exerciseSb = new StringBuilder();
 
     void exercisePage(Stage stage){
 
         VBox vBox = new VBox();
 
-//        Text dailyExercises = new Text("Daily Exercises");
-
-        String buttonDesign = "-fx-background-color: #737373;";
         HBox hBox = new HBox();
         Button backBtn = new Button("Back");
         backBtn.setPrefSize(100, 40);
@@ -1050,11 +1047,11 @@ public class GUI extends Application {
         Text pageTitle=  new Text("Exercises");
         pageTitle.setStyle("-fx-font-size: 30;");
 
-        Button addExerBtn = new Button("Add exercise");
+        Button addExerBtn = new Button("Add");
         addExerBtn.setPrefSize(100, 40);
         addExerBtn.setStyle(buttonStyling(16));
 
-        Button showExerBtn = new Button("Show exercises");
+        Button showExerBtn = new Button("Show");
         showExerBtn.setPrefSize(100, 40);
         showExerBtn.setStyle(buttonStyling(16));
 
@@ -1063,10 +1060,11 @@ public class GUI extends Application {
         hBox.setPadding(new Insets(50, 25, 25, 25));
         hBox.setSpacing(50);
 
-        Text exerciseContent = new Text(exerciceSb.toString());
+        Text exerciseContent = new Text(exerciseSb.toString());
 
         //submit exercise section
         VBox submitExercise = new VBox();
+        submitExercise.setVisible(false);
 
         ComboBox comboBox = new ComboBox();
         comboBox.getItems().add("Running");
@@ -1087,8 +1085,10 @@ public class GUI extends Application {
         TextField caloriesInput = new TextField();
         caloriesInput.setPromptText("Enter calories burnt");
 
-        Button submitEx = new Button("Submit Exercise");
+        Button submitEx = new Button("Submit");
         submitEx.setPrefSize(100, 40);
+        submitEx.setStyle(buttonStyling(16));
+
         submitExercise.getChildren().addAll(comboBox, comboBox1, caloriesInput, submitEx);
         submitExercise.setSpacing(10);
 
@@ -1104,8 +1104,7 @@ public class GUI extends Application {
             public void handle(ActionEvent actionEvent) {
 
                 userAccount.setDailyCalories(userAccount.getDailyCalories() + Integer.parseInt(caloriesInput.getText()));
-                exerciceSb.append(comboBox.getSelectionModel().getSelectedItem() + " - " + comboBox1.getSelectionModel().getSelectedItem()+ " - " +caloriesInput.getText()+ "\n");
-                exerciseContent.setText(exerciceSb.toString());
+                exerciseSb.append(comboBox.getSelectionModel().getSelectedItem() + " - " + comboBox1.getSelectionModel().getSelectedItem()+ " - " +caloriesInput.getText()+ "\n");
             }
         });
 
@@ -1124,7 +1123,7 @@ public class GUI extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 submitExercise.setVisible(true);
-                //make the exercises from showExerBtn invisible
+                exerciseContent.setVisible(false);
             }
         });
 
@@ -1132,7 +1131,8 @@ public class GUI extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 submitExercise.setVisible(false);
-                //output list of exercises with their durations
+                exerciseContent.setText(exerciseSb.toString());
+                exerciseContent.setVisible(true);
             }
         });
     }
