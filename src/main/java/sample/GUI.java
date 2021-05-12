@@ -438,11 +438,15 @@ public class GUI extends Application {
     }
     /* ============ END OF VALIDATION METHODS =============== */
 
+    String buttonStyling(int fontSize) {
+        return "-fx-cursor: hand; -fx-background-color: #737373; -fx-text-fill: #ededed; -fx-font-size: " + fontSize + ";";
+    }
+
     void MainScreen(Stage stage) throws IOException, CsvValidationException {
         HBox topMenu = new HBox();
 
         Button profileBtn = new Button("My\nProfile");
-        profileBtn.setStyle("-fx-font-size: 18; -fx-cursor: hand; -fx-background-color: #737373; -fx-text-fill: #ededed;");
+        profileBtn.setStyle(buttonStyling(18));
         profileBtn.setPrefSize(90,80);
 
         userCaloriesRemaining = userAccount.getDailyCalories();
@@ -451,7 +455,7 @@ public class GUI extends Application {
         caloriesTxt.setFill(Color.web("#8a8a8a"));
 
         Button logoutBtn = new Button("Logout");
-        logoutBtn.setStyle("-fx-font-size: 18; -fx-cursor: hand; -fx-background-color: #737373; -fx-text-fill: #ededed;");
+        logoutBtn.setStyle(buttonStyling(18));
         logoutBtn.setPrefSize(90,80);
         topMenu.getChildren().addAll(profileBtn, caloriesTxt, logoutBtn);
         topMenu.setAlignment(Pos.CENTER);
@@ -463,19 +467,19 @@ public class GUI extends Application {
 
         Button addFoodBtn = new Button("Add food");
         addFoodBtn.setPrefSize(110, 30);
-        addFoodBtn.setStyle("-fx-cursor: hand; -fx-background-color: #737373; -fx-text-fill: #ededed; -fx-font-size: 16;");
+        addFoodBtn.setStyle(buttonStyling(16));
 
         Button addExerciseBtn = new Button("Add exercise");
         addExerciseBtn.setPrefSize(110, 30);
-        addExerciseBtn.setStyle("-fx-cursor: hand; -fx-background-color: #737373; -fx-text-fill: #ededed; -fx-font-size: 16;");
+        addExerciseBtn.setStyle(buttonStyling(16));
 
         Button addGoalBtn = new Button("Add goal");
         addGoalBtn.setPrefSize(110, 30);
-        addGoalBtn.setStyle("-fx-cursor: hand; -fx-background-color: #737373; -fx-text-fill: #ededed; -fx-font-size: 16;");
+        addGoalBtn.setStyle(buttonStyling(16));
 
         Button groupBtn = new Button("Groups");
         groupBtn.setPrefSize(110, 30);
-        groupBtn.setStyle("-fx-cursor: hand; -fx-background-color: #737373; -fx-text-fill: #ededed; -fx-font-size: 16;");
+        groupBtn.setStyle(buttonStyling(16));
         leftMenu.getChildren().addAll(addFoodBtn, addExerciseBtn, addGoalBtn, groupBtn);
 
         System.out.println("Test: " + user_id);
@@ -689,10 +693,16 @@ public class GUI extends Application {
         HBox hBox = new HBox();
         Button backBtn = new Button("Back");
         backBtn.setPrefSize(100, 40);
+        backBtn.setStyle(buttonStyling(16));
+
         Button createBtn = new Button("Create");
         createBtn.setPrefSize(100, 40);
+        createBtn.setStyle(buttonStyling(16));
+
         Button joinBtn = new Button("Join");
         joinBtn.setPrefSize(100, 40);
+        joinBtn.setStyle(buttonStyling(16));
+
         hBox.getChildren().addAll(backBtn, createBtn, joinBtn);
         hBox.setAlignment(Pos.CENTER);
         hBox.setPadding(new Insets(50, 25, 25, 25));
@@ -734,6 +744,7 @@ public class GUI extends Application {
     String prevWeight1 = "...";
     String prevWeight2 = "...";
     String prevWeight3 = "...";
+
     void GoalsPage(Stage stage) throws IOException, CsvValidationException {
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
@@ -744,10 +755,16 @@ public class GUI extends Application {
         HBox hBox = new HBox();
         Button backBtn = new Button("Back");
         backBtn.setPrefSize(100, 40);
+        backBtn.setStyle(buttonStyling(16));
+
         Button changeGoalBtn = new Button("Change goal");
         changeGoalBtn.setPrefSize(100, 40);
+        changeGoalBtn.setStyle(buttonStyling(16));
+
         Button trackWeightBtn = new Button("Track weight");
         trackWeightBtn.setPrefSize(100, 40);
+        trackWeightBtn.setStyle(buttonStyling(16));
+
         hBox.getChildren().addAll(backBtn, changeGoalBtn, trackWeightBtn);
         hBox.setAlignment(Pos.CENTER);
         hBox.setPadding(new Insets(50, 25, 25, 25));
@@ -1017,25 +1034,29 @@ public class GUI extends Application {
     }
 
     StringBuilder exerciceSb = new StringBuilder();
-    boolean visible = true;
 
     void exercisePage(Stage stage){
 
         VBox vBox = new VBox();
 
 //        Text dailyExercises = new Text("Daily Exercises");
+
+        String buttonDesign = "-fx-background-color: #737373;";
         HBox hBox = new HBox();
         Button backBtn = new Button("Back");
         backBtn.setPrefSize(100, 40);
+        backBtn.setStyle(buttonStyling(16));
 
         Text pageTitle=  new Text("Exercises");
         pageTitle.setStyle("-fx-font-size: 30;");
 
         Button addExerBtn = new Button("Add exercise");
         addExerBtn.setPrefSize(100, 40);
+        addExerBtn.setStyle(buttonStyling(16));
 
         Button showExerBtn = new Button("Show exercises");
         showExerBtn.setPrefSize(100, 40);
+        showExerBtn.setStyle(buttonStyling(16));
 
         hBox.getChildren().addAll(backBtn, pageTitle, addExerBtn, showExerBtn);
         hBox.setAlignment(Pos.CENTER);
@@ -1102,24 +1123,18 @@ public class GUI extends Application {
         addExerBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if (visible) {
-                    submitExercise.setVisible(false);
-                    visible = false;
-                }
-                else {
-                    submitExercise.setVisible(true);
-                    visible = true;
-                }
+                submitExercise.setVisible(true);
+                //make the exercises from showExerBtn invisible
             }
         });
 
-//        showExerBtn.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent actionEvent) {
-//                //output list of exercises with their durations
-//
-//            }
-//        }
+        showExerBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                submitExercise.setVisible(false);
+                //output list of exercises with their durations
+            }
+        });
     }
 
     public static void main(String[] args) throws UnirestException {
