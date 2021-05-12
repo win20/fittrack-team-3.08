@@ -1017,19 +1017,36 @@ public class GUI extends Application {
     }
 
     StringBuilder exerciceSb = new StringBuilder();
+    boolean visible = true;
+
     void exercisePage(Stage stage){
 
         VBox vBox = new VBox();
-        Button backBtn = new Button("Back");
+//        Button backBtn = new Button("Back");
         //comboBox for time
         //back button
         //submit button
 
-        Text dailyExercises = new Text("Daily Exercises");
+//        Text dailyExercises = new Text("Daily Exercises");
+        HBox hBox = new HBox();
+        Button backBtn = new Button("Back");
+        backBtn.setPrefSize(100, 40);
+
+        Text pageTitle=  new Text("Exercises");
+        pageTitle.setStyle("-fx-font-size: 30;");
+
+        Button addExerBtn = new Button("Add exercise");
+        addExerBtn.setPrefSize(100, 40);
+
+        hBox.getChildren().addAll(backBtn, pageTitle, addExerBtn);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setPadding(new Insets(50, 25, 25, 25));
+        hBox.setSpacing(50);
+
         Text exerciseContent = new Text(exerciceSb.toString());
 
-
-        Button submitEx = new Button("Submit Exercise");
+        //submit exercise section used for invisibility
+        VBox submitExercise = new VBox();
 
         ComboBox comboBox = new ComboBox();
         comboBox.getItems().add("Running");
@@ -1048,12 +1065,18 @@ public class GUI extends Application {
         comboBox1.getItems().add("1 h");
         comboBox1.getItems().add("more than 1 h");
 
-        vBox.setAlignment(Pos.CENTER);
-
         TextField caloriesInput = new TextField();
         caloriesInput.setPromptText("Enter calories burnt");
 
-        vBox.getChildren().addAll(dailyExercises, exerciseContent,comboBox, comboBox1,caloriesInput ,backBtn, submitEx);
+        Button submitEx = new Button("Submit Exercise");
+        submitEx.setPrefSize(100, 40);
+        submitExercise.getChildren().addAll(comboBox, comboBox1, caloriesInput, submitEx);
+        submitExercise.setSpacing(10);
+
+        //
+        vBox.setAlignment(Pos.CENTER);
+
+        vBox.getChildren().addAll(hBox, exerciseContent, submitExercise);
 
         Scene scene = new Scene(vBox);
         stage.setScene(scene);
@@ -1076,6 +1099,20 @@ public class GUI extends Application {
                     MainScreen(stage);
                 } catch (IOException | CsvValidationException e) {
                     e.printStackTrace();
+                }
+            }
+        });
+
+        addExerBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (visible) {
+                    submitExercise.setVisible(false);
+                    visible = false;
+                }
+                else {
+                    submitExercise.setVisible(true);
+                    visible = true;
                 }
             }
         });
