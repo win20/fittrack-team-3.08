@@ -1022,10 +1022,6 @@ public class GUI extends Application {
     void exercisePage(Stage stage){
 
         VBox vBox = new VBox();
-//        Button backBtn = new Button("Back");
-        //comboBox for time
-        //back button
-        //submit button
 
 //        Text dailyExercises = new Text("Daily Exercises");
         HBox hBox = new HBox();
@@ -1038,14 +1034,17 @@ public class GUI extends Application {
         Button addExerBtn = new Button("Add exercise");
         addExerBtn.setPrefSize(100, 40);
 
-        hBox.getChildren().addAll(backBtn, pageTitle, addExerBtn);
+        Button showExerBtn = new Button("Show exercises");
+        showExerBtn.setPrefSize(100, 40);
+
+        hBox.getChildren().addAll(backBtn, pageTitle, addExerBtn, showExerBtn);
         hBox.setAlignment(Pos.CENTER);
         hBox.setPadding(new Insets(50, 25, 25, 25));
         hBox.setSpacing(50);
 
         Text exerciseContent = new Text(exerciceSb.toString());
 
-        //submit exercise section used for invisibility
+        //submit exercise section
         VBox submitExercise = new VBox();
 
         ComboBox comboBox = new ComboBox();
@@ -1056,7 +1055,6 @@ public class GUI extends Application {
         comboBox.getItems().add("Cardio");
         comboBox.getItems().add("Yoga");
         comboBox.getItems().add("Other Exercise Type");
-
 
         ComboBox comboBox1 = new ComboBox();
         comboBox1.getItems().add("15 min");
@@ -1073,9 +1071,7 @@ public class GUI extends Application {
         submitExercise.getChildren().addAll(comboBox, comboBox1, caloriesInput, submitEx);
         submitExercise.setSpacing(10);
 
-        //
         vBox.setAlignment(Pos.CENTER);
-
         vBox.getChildren().addAll(hBox, exerciseContent, submitExercise);
 
         Scene scene = new Scene(vBox);
@@ -1116,6 +1112,14 @@ public class GUI extends Application {
                 }
             }
         });
+
+//        showExerBtn.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent actionEvent) {
+//                //output list of exercises with their durations
+//
+//            }
+//        }
     }
 
     public static void main(String[] args) throws UnirestException {
